@@ -3,7 +3,7 @@
 Plugin Name: Password Protect Wordpress
 Plugin URI: http://www.spiders-design.co.uk/wordpress-stuff/password-protect-wordpress-blog/?b
 This plugin password protects your wordpress blog with a single password. Great for family blogs.
-Version: 3.6
+Version: 3.7
 Author: Daniel Chatfield
 Author URI: http://www.spiders-design.co.uk
 License: GPLv2
@@ -16,7 +16,7 @@ if(file_exists(dirname(__FILE__).'/extensions.php'))
     include_once(dirname(__FILE__).'/extensions.php');
 }
 if(!defined('PLUGINVERSION')){
-    define('PLUGINVERSION','3.6b');
+    define('PLUGINVERSION','3.7b');
 }
 if(!defined('THIS_PLUGIN_TEXT')){
     define('THIS_PLUGIN_TEXT','Plugin version '.PLUGINVERSION);

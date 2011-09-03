@@ -176,7 +176,7 @@ updatelogs();
                 <div class="options">
                     <div class="option_section gensetts">
                         <div class="section checkbox">
-                            <h3 class="heading"><?php _e('Enable password protection')?></h3>
+                            <h3 class="sdheading"><?php _e('Enable password protection')?></h3>
                             <div class="setting">
                                 <div class="control">
                                     <input type="hidden" name="password_protect[enabled]" id="sdpp_enabled" value="<?php echo($options['enabled'])?>" />
@@ -188,7 +188,7 @@ updatelogs();
                         </div>
                         
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password');?></h3>
+                            <h3 class="sdheading"><?php _e('Password');?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 200px;">
                                     <input style="width: 200px;" type="password" name="password_protect[password]" id="sdpp_password" value="<?php echo($options['password']);?>" />
@@ -198,7 +198,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Logo')?></h3>
+                            <h3 class="sdheading"><?php _e('Logo')?></h3>
                             <div class="setting">
                                 <img src="<?php echo($options['logo_path'])?>" height="100px" width="500px" style="margin-bottom: 10px;" />
                                 <div class="control" style="width: 300px;">
@@ -210,7 +210,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Message')?></h3>
+                            <h3 class="sdheading"><?php _e('Message')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input disabled="disabled" style="width: 300px;" type="text" name="password_protect[message]" id="sdpp_message" value="<?php echo($options['message'])?>" />
@@ -222,7 +222,7 @@ updatelogs();
                     </div>
                     <div style="display: none;" class="option_section advsetts">
                         <div class="section checkbox">
-                            <h3 class="heading"><?php _e('Disable RSS feeds')?></h3>
+                            <h3 class="sdheading"><?php _e('Disable RSS feeds')?></h3>
                             <div class="setting">
                                 <div class="control">
                                     <input type="hidden" name="password_protect[disablerss]" id="sdpp_disablerss" value="<?php echo($options['disablerss']);?>" />
@@ -233,7 +233,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section checkbox">
-                            <h3 class="heading"><?php _e('Use get_header hook')?></h3>
+                            <h3 class="sdheading"><?php _e('Use get_header hook')?></h3>
                             <div class="setting">
                                 <div class="control">
                                     <input type="hidden" name="password_protect[getheader]" id="sdpp_getheader" value="<?php echo($options['getheader'])?>" />
@@ -244,7 +244,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section checkbox">
-                            <h3 class="heading"><?php _e('Use init hook')?></h3>
+                            <h3 class="sdheading"><?php _e('Use init hook')?></h3>
                             <div class="setting">
                                 <div class="control">
                                     <input type="hidden" name="password_protect[init]" id="sdpp_init" value="<?php echo($options['init'])?>" />
@@ -255,7 +255,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section checkbox">
-                            <h3 class="heading"><?php _e('Multisite single sign-in')?></h3>
+                            <h3 class="sdheading"><?php _e('Multisite single sign-in')?></h3>
                             <div class="setting">
                                 <div class="control">
                                     <input type="hidden" name="password_protect[oneforall]" id="sdpp_oneforall" value="<?php echo($options['oneforall'])?>" />
@@ -266,7 +266,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section checkbox">
-                            <h3 class="heading"><?php _e('Use cookies')?></h3>
+                            <h3 class="sdheading"><?php _e('Use cookies')?></h3>
                             <div class="setting">
                                 <div class="control">
                                     <input type="hidden" name="password_protect[usecookies]" id="sdpp_usecookies" value="<?php echo($options['usecookies'])?>" />
@@ -279,7 +279,7 @@ updatelogs();
                     </div>
                     <div style="display: none;" class="option_section multipass">
                         <div class="section checkbox">
-                            <h3 class="heading"><?php _e('Use multiple passwords')?></h3>
+                            <h3 class="sdheading"><?php _e('Use multiple passwords')?></h3>
                             <div class="setting">
                                 <div class="control">
                                     <input type="hidden" name="password_protect[multipass]" id="sdpp_multipass" value="<?php echo($options['multipass'])?>" />
@@ -291,7 +291,7 @@ updatelogs();
                         </div>
                         
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 1')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 1')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password1]" id="sdpp_password1" value="<?php echo($options['password1'])?>" />
@@ -301,7 +301,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 2')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 2')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password2]" id="sdpp_password2" value="<?php echo($options['password2'])?>" />
@@ -311,7 +311,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 3')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 3')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password3]" id="sdpp_password3" value="<?php echo($options['password3'])?>" />
@@ -321,7 +321,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 4')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 4')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password4]" id="sdpp_password4" value="<?php echo($options['password4'])?>" />
@@ -331,7 +331,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 5')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 5')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password5]" id="sdpp_password5" value="<?php echo($options['password5'])?>" />
@@ -341,7 +341,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 6')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 6')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password6]" id="sdpp_password6" value="<?php echo($options['password6'])?>" />
@@ -351,7 +351,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 7')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 7')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password7]" id="sdpp_password7" value="<?php echo($options['password7'])?>" />
@@ -361,7 +361,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 8')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 8')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password8]" id="sdpp_password8" value="<?php echo($options['password8'])?>" />
@@ -371,7 +371,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 9')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 9')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password9]" id="sdpp_password9" value="<?php echo($options['password9'])?>" />
@@ -381,7 +381,7 @@ updatelogs();
                             </div>
                         </div>
                         <div class="section textbox">
-                            <h3 class="heading"><?php _e('Password 10')?></h3>
+                            <h3 class="sdheading"><?php _e('Password 10')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
                                     <input class="premiumdisabled" disabled="disabled" style="width: 300px;" type="password" name="password_protect[password10]" id="sdpp_password10" value="<?php echo($options['password10'])?>" />
@@ -395,7 +395,7 @@ updatelogs();
                         <div class="sd_message notification preonly"><?php _e('Example logs shown for demo purposes')?></div>
                         <div class="sd_message notification"><?php _e('Password 0 is the password defined on the general settings page')?></div>
                         <div class="section checkbox">
-                            <h3 class="heading"><?php _e('Create log of login attempts')?></h3>
+                            <h3 class="sdheading"><?php _e('Create log of login attempts')?></h3>
                             <div class="setting">
                                 <div class="control">
                                     <input type="hidden" name="password_protect[uselogs]" id="sdpp_uselogs" value="<?php echo($options['uselogs'])?>" />
