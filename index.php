@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Password Protect Wordpress
-Plugin URI: http://www.spiders-design.co.uk/wordpress-stuff/password-protect-wordpress-blog/?b
+Plugin Name: Password Protect Wordpress Blog
+Plugin URI: http://www.spiders-design.co.uk/wordpress-stuff/password-protect-wordpress-blog/
 This plugin password protects your wordpress blog with a single password. Great for family blogs.
-Version: 3.7
+Version: 3.8
 Author: Daniel Chatfield
 Author URI: http://www.spiders-design.co.uk
 License: GPLv2
@@ -16,7 +16,7 @@ if(file_exists(dirname(__FILE__).'/extensions.php'))
     include_once(dirname(__FILE__).'/extensions.php');
 }
 if(!defined('PLUGINVERSION')){
-    define('PLUGINVERSION','3.7b');
+    define('PLUGINVERSION','3.8b');
 }
 if(!defined('THIS_PLUGIN_TEXT')){
     define('THIS_PLUGIN_TEXT','Plugin version '.PLUGINVERSION);
@@ -128,13 +128,6 @@ if(!function_exists('add_defaults_fn'))
         }
         elseif($options['version'] != PLUGINVERSION)
         {//upgrade required
-            $defaults['enabled'] = $options['checkbox_1'];
-            $defaults['password'] = $options['pass_1'];
-            if($options["disabled_checkbox_1"] == 'on')
-            {
-                $defaults['licensed'] = 'license';
-            }
-            $defaults['logo_path'] = $options['text_1'];
             update_option('password_protect_options', $defaults);
             update_option('password_protect_logs', $logs);
         }
