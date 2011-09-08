@@ -5,8 +5,9 @@
  */
 if(isset($_REQUEST['password_protect']))
 {//settings being saved
-    $_REQUEST['password_protect']['message'] = htmlspecialchars_decode($_REQUEST['password_protect']['message']);
-   update_option('password_protect_options',$_REQUEST['password_protect']);
+    $save = $_REQUEST['password_protect'];
+    $save['message'] = str_replace('/"','"',stripslashes(htmlspecialchars_decode($_REQUEST['password_protect']['message'])));
+   update_option('password_protect_options',$save);
 }
 $options = get_option('password_protect_options');
  
