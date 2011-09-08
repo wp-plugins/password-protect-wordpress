@@ -5,6 +5,7 @@
  */
 if(isset($_REQUEST['password_protect']))
 {//settings being saved
+    $_REQUEST['password_protect']['message'] = htmlspecialchars_decode($_REQUEST['password_protect']['message']);
    update_option('password_protect_options',$_REQUEST['password_protect']);
 }
 $options = get_option('password_protect_options');
@@ -213,7 +214,7 @@ updatelogs();
                             <h3 class="sdheading"><?php _e('Message')?></h3>
                             <div class="setting">
                                 <div class="control" style="width: 300px;">
-                                    <input disabled="disabled" style="width: 300px;" type="text" name="password_protect[message]" id="sdpp_message" value="<?php echo($options['message'])?>" />
+                                    <input disabled="disabled" style="width: 300px;" type="text" name="password_protect[message]" id="sdpp_message" value="<?php echo( htmlspecialchars($options['message']))?>" />
                                 </div>
                                 <div class="help"><?php _e('Message displayed to user')?><div class="red preonly"><?php _e('Premium only')?></div><div class="button premiumbutton" style="display: inline;"><?php _e('Make contribution to get premium')?></div></div>
                                 <div class="clear"></div>

@@ -124,3 +124,7 @@ A. The features are unlocked automatically after I process the payment. Please a
 * Fixed compatibility issue where setting headings were getting removed
 
 * removed PHP short tags
+
+= 3.9 =
+
+* Links can now be in the message (by typing in the html)
