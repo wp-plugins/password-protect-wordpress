@@ -1,5 +1,5 @@
-=== Password Protect Wordpress Blog ===
-Contributors: jcnetsys, spiders-design, spidersdesign 
+=== Password Protect Wordpress ===
+Contributors: jcnetsys
 Donate link:http://www.spiders-design.co.uk/donate/
 Tags: password,protect,password protect,wordpress,blog, security
 Requires at least: 2.8
