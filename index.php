@@ -3,7 +3,7 @@
 Plugin Name: Password Protect Wordpress
 Plugin URI: http://www.spiders-design.co.uk/wordpress-stuff/password-protect-wordpress-blog/
 This plugin password protects your wordpress blog with a single password. Great for family blogs.
-Version: 3.9a
+Version: 3.9.1
 Author: Daniel Chatfield
 Author URI: http://www.spiders-design.co.uk
 License: GPLv2
@@ -16,7 +16,7 @@ if(file_exists(dirname(__FILE__).'/extensions.php'))
     include_once(dirname(__FILE__).'/extensions.php');
 }
 if(!defined('PLUGINVERSION')){
-    define('PLUGINVERSION','3.9b');
+    define('PLUGINVERSION','3.9.1b');
 }
 if(!defined('THIS_PLUGIN_TEXT')){
     define('THIS_PLUGIN_TEXT','Plugin version '.PLUGINVERSION);
@@ -109,28 +109,7 @@ if(!function_exists('add_defaults_fn'))
     		update_option('password_protect_options', $defaults);
             update_option('password_protect_logs', $logs); 
     	}
-        $options = get_option('password_protect_options');
-        if($options['version'] == '3.3')
-        {
-            $options['version'] = PLUGINVERSION;
-        }
-        elseif($options['version'] == '3.0')//upgrade from version 3
-        {
-            $options['version'] = PLUGINVERSION;
-            $options['usecookies'] = "off";
-            $options['multipass'] = "off";
-            $options['uselogs'] = "off";
-            $options['logs_id'] = "10";
-            $options['init'] = 'off';
-            $options['message'] = 'Password:';
-            update_option('password_protect_options', $options);
-            update_option('password_protect_logs', $logs);
-        }
-        elseif($options['version'] != PLUGINVERSION)
-        {//upgrade required
-            update_option('password_protect_options', $defaults);
-            update_option('password_protect_logs', $logs);
-        }
+        
     }
 }
 global $status;

@@ -239,7 +239,7 @@ if(function_exists('sd_pp_login_style'))
        <?php echo($options['message']); ?>
         </label>
         <br />
-        <form name="login" action="<?php echo(site_url());?>/" method="post" onsubmit="<?php if($options['usecookies'] != 'on'){echo('return false');}?>">
+        <form name="login" action="<?php echo(home_url());?>/" method="post" onsubmit="<?php if($options['usecookies'] != 'on'){echo('return false');}?>">
         <input id="password" type="password" name="sd_password" onkeypress="if (event.keyCode == 13){dologin()}" tabindex="1" />
         
       <div id="submit" onClick="dologin()"><?php echo(__('Login'));?><div id="loading" style="display:none"></div>

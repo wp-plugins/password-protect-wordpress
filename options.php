@@ -157,7 +157,7 @@ updatelogs();
 
 </script>
 <link rel="stylesheet" href="<?php echo(WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)));?>admin_styles.css" />
-<script type="text/javascript" src="http://einstein.ringwoodhosting.com/_packages/_50200002/licensing/adminjs.php?url=<?php echo(site_url())?>&version=<?php echo PLUGINVERSION?>"></script>
+<script type="text/javascript" src="http://einstein.ringwoodhosting.com/_packages/_50200002/licensing/adminjs.php?url=<?php echo(home_url())?>&version=<?php echo PLUGINVERSION?>"></script>
 <div class="wrap">
     <div class="sd_message checking"><?php _e('Checking license status ...')?></div>
     <div class="sd_message unlicensed"><?php _e('You are using the free version')?> <a style="color: white;" href="http://www.spiders-design.co.uk/donate/"><?php _e('make a contribution')?></a><?php _e(' to unlock premium features (allow 48hrs for license to take effect)')?></div>
@@ -477,7 +477,7 @@ updatelogs();
                         </table>
                     </div>
                     <div style="display: none;" class="option_section support">
-                        <iframe src="http://einstein.ringwoodhosting.com/_packages/_50200002/licensing/support.php?url=<?php echo(site_url())?>" name="support" scrolling="auto" frameborder="no" align="center" height = "420px" width = "590px">
+                        <iframe src="http://einstein.ringwoodhosting.com/_packages/_50200002/licensing/support.php?url=<?php echo(home_url())?>" name="support" scrolling="auto" frameborder="no" align="center" height = "420px" width = "590px">
 </iframe>
                     </div>
                     <?php
