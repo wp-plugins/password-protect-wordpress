@@ -169,7 +169,10 @@ function doRegister() {
 	//show status indicator
 	createAjaxBlinker( method, title );
 
-	var args = {};
+	var args = {
+		'install_url': getInstallUrl(),
+		'install_name': getInstallName()
+	};
 
 	var request = doApiRequest( method, args ).success(function(data){
 		setAjaxBlinkerStatus( method, "success", "Registered" );
