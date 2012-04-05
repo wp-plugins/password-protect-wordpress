@@ -1,23 +1,22 @@
 === Password Protect Wordpress ===
-Contributors: jcnetsys
-Donate link:http://www.spiders-design.co.uk/donate/
+Contributors: volcanicpixels
+Donate link: http://www.spiders-design.co.uk/donate/
 Tags: password,protect,password protect,wordpress,blog, security
-Requires at least: 2.8
-Tested up to: 3.2.0
-Stable tag: 3.9.1
+Requires at least: 3.3.1
+Tested up to: 3.3.1
+Stable tag: 3.9
 
-This plugin password protects your wordpress blog with a single password. Great for family blogs.
+This plugin password protects your wordpress blog with a single password.
 
 == Description ==
 
-Password Protect Wordpress plugin for Wordpress is an easy to use plugin to restrict all access to your blog by the use of a single password.
+Want to make your blog private from prying eyes? Well my password protection plugin is perfect for that job; with its sexy looks (well sort of), intelligent UI and endless features it will make the chore of keeping your data secure and private easy.
 
 Features:
 
 No user accounts - just a single password.
 Easy to use admin panel.
 Internationalized to make translations easy.
-Compatible with extensions (updates don't overwrite customisations)
 
 Custom Logo [premium only]<br />
 Custom Message [premium only]<br />
@@ -26,7 +25,7 @@ Logging [premium only]
 
 
 Please review and vote that it works.
-Follow @spidersdesign and tweet fot support
+Follow @danielchatfield and tweet for support
 
 == Installation ==
 
@@ -42,11 +41,7 @@ This section describes how to install the plugin and get it working.
 1. Edit the configuration by clicking on 'password protect' under settings
 == Frequently Asked Questions ==
 
-Q. How do I add a logout button
-
-A. Create a link to any page with '?action=logout' on the end. If your theme supports menus click menus in the admin panel and add an item pointing to your homepage followed by '?action=logout'.
-
-Q. I have made a contribution - how do I unlick the premium features.
+Q. I have made a contribution - how do I unlock the premium features.
 
 A. The features are unlocked automatically after I process the payment. Please allow 48 hrs for this before contacting me.
 
@@ -128,9 +123,3 @@ A. The features are unlocked automatically after I process the payment. Please a
 = 3.9 =
 
 * Links can now be in the message (by typing in the html)
-
-= 3.9.1 =
-
-* Fixed settings reset on update]
-
-* Added support for installations where home_url is different to wordpress
