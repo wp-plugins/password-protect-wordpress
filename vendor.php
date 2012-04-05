@@ -8,7 +8,7 @@ Add licensing to bar
 */
 class private_blog_vendor extends lavaExtension {
 
-	public $isLocal = true;
+	public $isLocal = false;
 	public $apiVersion = 1;
 
 	function init() {
