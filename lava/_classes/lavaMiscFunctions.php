@@ -62,9 +62,10 @@ class lavaMiscFunctions extends lavaBase
             return false;//this is a beta plugin so we should assume run update hooks all the time
         }
         if( $ver1 == $ver2 ) {
+            return false;
             return true;
         }
-        return fasle;
+        return false;
     }
 
     function userAgentInfo() {
