@@ -1,5 +1,7 @@
 body {
 	background: #FBFBFB;
+	margin: 0px;
+	padding: 0px;
 }
 
 
@@ -79,6 +81,11 @@ body {
 		    -ms-box-shadow: inset 1px 1px 3px rgba(200,200,200,0.8);
 			 -o-box-shadow: inset 1px 1px 3px rgba(200,200,200,0.8);
 		        box-shadow: inset 1px 1px 3px rgba(200,200,200,0.8);
+	}
+
+	
+	input.input:focus {
+		border-color: #4D90F0;
 	}
 
 .notice {
