@@ -77,7 +77,7 @@ class Lava_Base
 		}
 		/* Lets check whether we have _parent_ methods */
 		if( method_exists( $this, "_parent_{$method_name}") ) {
-			$callback = array( $this, "parent_{$method_name}" );
+			$callback = array( $this, "_parent_{$method_name}" );
 			return call_user_func_array( $callback, $args );
 		}
 

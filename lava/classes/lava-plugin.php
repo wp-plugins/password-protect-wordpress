@@ -82,19 +82,19 @@ class Lava_Plugin extends Lava_Base
 		$file_name = strtolower( str_replace( '_' , '-', $class_name ) );
 		$main_dirs = array(
 			dirname( __FILE__ ),		//check plugin _classes folder and sub dirs
-			dirname( $this->_get_plugin_file_path() ) . '/_classes'   //check lava _classes folder and sub dirs
+			dirname( $this->_get_plugin_file_path() ) . '/classes'   //check lava _classes folder and sub dirs
 
 		);
 
 		$sub_dirs = array(
 			'',
-			'_ajax',
-			'_extensions',
-			'_external',
-			'_pages',
-			'_settings',
-			'_skins',
-			'_tables'
+			'ajax',
+			'extensions',
+			'external',
+			'pages',
+			'settings',
+			'skins',
+			'tables'
 		);
 
 
@@ -108,7 +108,7 @@ class Lava_Plugin extends Lava_Base
 		}
 	}
 
-	function _instantiate_class( $class_name, $args = array(), $should_prefix = true ) {
+	function _construct_class( $class_name, $args = array(), $should_prefix = true ) {
 		if( $should_prefix )
 			$class_name = "Lava_" . $class_name;
 
