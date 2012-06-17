@@ -237,17 +237,17 @@ class Lava_Pages extends Lava_Base
 		$this->_do_lava_action( '_add_dependancies' );
 	}
 
-	function _add_stylesheet( $handle, $src, $deps = array(), $ver = 1, $media = false, $should_enqueue = true ) {
+	function _add_stylesheet( $handle, $src, $deps = array(), $ver = false, $media = false, $should_enqueue = true ) {
 		$this->_add_stylesheet_( $handle, $src, $deps, $ver, $media, $should_enqueue );
 		return $this->_r();
 	}
 
-	function _add_lava_stylesheet( $handle, $src, $deps = array(), $ver = 1, $media = false, $should_enqueue = false ) {
+	function _add_lava_stylesheet( $handle, $src, $deps = array(), $ver = false, $media = false, $should_enqueue = false ) {
 		$this->_add_stylesheet_( $handle, $src, $deps, $ver, $media, $should_enqueue, true, 'lava/assets/' );
 		return $this->_r();
 	}
 
-	function _add_plugin_stylesheet( $handle, $src, $deps = array(), $ver = 1, $media = false, $should_enqueue = true ) {
+	function _add_plugin_stylesheet( $handle, $src, $deps = array(), $ver = false, $media = false, $should_enqueue = true ) {
 		$this->_add_stylesheet_( $handle, $src, $deps, $ver, $media, $should_enqueue, true, 'assets/' );
 		return $this->_r();
 	}
@@ -304,6 +304,58 @@ class Lava_Pages extends Lava_Base
 				wp_enqueue_style( $handle );
 			}
 		}
+	}
+
+	function _add_script( $handle, $src, $deps = array(), $ver = false, $in_footer = false, $should_enqueue = true ) {
+		$this->_add_script_( $handle, $src, $deps, $ver, $in_footer, $should_enqueue );
+		return $this->_r();
+	}
+
+	function _add_lava_script( $handle, $src, $deps = array(), $ver = false, $in_footer = false, $should_enqueue = false ) {
+		$this->_add_script_( $handle, $src, $deps, $ver, $in_footer, $should_enqueue, true, 'lava/assets/js/' );
+		return $this->_r();
+	}
+
+	function _add_plugin_script( $handle, $src, $deps = array(), $ver = false, $in_footer = false, $should_enqueue = true ) {
+		$this->_add_script_( $handle, $src, $deps, $ver, $in_footer, $should_enqueue, true, 'assets/js/' );
+		return $this->_r();
+	}
+
+	function _add_script_( $handle, $src, $deps, $ver, $in_footer, $should_enqueue, $should_namespace = false, $asset_folder = false ) {
+		if( $should_namespace ) {
+			$handle = $this->_namespace( $handle );
+		}
+
+		if( $asset_folder ) {
+			$src = plugins_url( $asset_folder . $src, $this->_get_plugin_file_path() );
+		}
+		$style = compact( 'handle', 'src', 'deps', 'ver', 'in_footer', 'should_enqueue' );
+		$this->_styles[ $handle ] = $style;
+	}
+
+	function _script_exists( $handle ) {
+		return array_key_exists( $handle, $this->_styles );
+	}
+
+	function _use_script( $handle, $should_namespace = false ) {
+		if( $should_namespace ) {
+			$handle = $this->_namespace( $handle );
+		}
+
+		if( $this->_script_exists( $handle ) ) {
+			$this->_styles[ $handle ]['should_enqueue'] = true;
+		}
+		return $this->_r();
+	}
+
+	function _use_lava_script( $handle ) {
+		$this->_use_script( $handle, true );
+		return $this->_r();
+	}
+
+	function _use_plugin_script( $handle ) {
+		$this->_use_script( $handle, true );
+		return $this->_r();
 	}
 
 	function _register_scripts() {
