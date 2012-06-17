@@ -244,7 +244,6 @@ class Lava_Base
 					$method = $hook;
 
 				if( $should_namespace ) {
-					$method = $this	->_namespace( $method );
 					$hook = $this	->_namespace( $hook   );
 				}
 
@@ -270,7 +269,7 @@ class Lava_Base
 		return $this->_add_action( $hooks, $methods, $priority, $how_many_args, $should_namespace, true );
 	}
 
-	function _add_lava_action( $hooks, $methods = '', $priority = 10, $how_many_args ) {
+	function _add_lava_action( $hooks, $methods = '', $priority = 10, $how_many_args = 0 ) {
 		return $this->_add_action( $hooks, $methods, $priority, $how_many_args ,true );
 	}
 
@@ -347,16 +346,15 @@ class Lava_Base
 	}
 
 	function _hook() {
-		$plugin_id = $this->_get_plugin_id();
 		$identifier = $this->_get_hook_identifier();
 		$hooks = func_get_args();
 
-		$hook = "{$plugin_id}{$identifier}";
+		$hook = "{$identifier}";
 
 		foreach( $hooks as $subhook ) {
 			$hook = $hook . '/' . $subhook;
 		}
-
+		return $hook;
 	}
 
 	function _get_hook_identifier() {

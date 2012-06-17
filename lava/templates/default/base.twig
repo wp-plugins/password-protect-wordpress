@@ -1,3 +1,18 @@
-<div class="wrap">
+<div class="wrap debug">
 	<h2>{{ plugin.name | default('Undefined Plugin') }}</h2>
+	<div id="lava-theatre" class="lava-theatre">
+		{% include 'topbar.twig' %}
+		{% include 'actionbar.twig' %}
+		<div class="lava-stage-cntr">
+			<div class="lava-programme">
+			</div>
+			<!-- lava-programme -->
+			<div class="lava-stage">
+			</div>
+			<!-- lava-stage -->
+		</div>
+		<!-- lava-stage-cntr -->
+	</div>
+	<!-- lava-theatre -->
 </div>
+<!-- wrap -->

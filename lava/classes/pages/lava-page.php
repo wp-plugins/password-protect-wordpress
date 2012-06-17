@@ -40,7 +40,12 @@ class Lava_Page extends Lava_Base
 		}
 		$this->_set_return_object( $this->_page_controller );
 
+		$this->_set_parent( $this->_page_controller );
+
 		$this->_add_action( 'admin_menu', '_register_page', 3 );
+		$this->_add_action( 'admin_menu', '_register_get_template_variables', 4 );
+
+		$this->_add_lava_action( '_add_dependancies' );
 	}
 
 	function _get_hook_identifier() {
@@ -49,7 +54,9 @@ class Lava_Page extends Lava_Base
 
 
 
-
+	/*
+		Accessors
+	*/
 
 
 	function _get_section_id() {
@@ -97,7 +104,9 @@ class Lava_Page extends Lava_Base
 
 
 
-
+	/*
+		Flow functions
+	*/
 
 	function _register_page() {
 
@@ -128,6 +137,12 @@ class Lava_Page extends Lava_Base
 		$template->display( $variables );
 	}
 
+
+
+	/* 
+		Template functions
+	*/
+
 	function _get_template_directories() {
 		return $this->_template_directories;
 	}
@@ -151,6 +166,33 @@ class Lava_Page extends Lava_Base
 		return $this->_twig_environment->loadTemplate( $template );
 	}
 
+	/*
+		Template variable functions
+	*/
+
+	function _register_get_template_variables() {
+		$hook = $this->_hook( '_get_template_variables' );
+		$filters = array(
+			'plugin_meta'
+		);
+		foreach( $filters as $filter ) {
+			$this->_add_lava_filter( $hook, "_get_template_variables__{$filter}" );
+		}
+	}
+
+	function _get_template_variables__plugin_meta( $vars ) {
+		$plugin = array(
+			'id'      => $this->_get_plugin_id(),
+			'name'    => $this->_get_plugin_name(),
+			'version' => $this->_get_plugin_version()
+		);
+		$hook = $this->_hook( '_get_template_variables', '_plugin_meta' );
+		$plugin = $this->_apply_lava_filters( $hook, $plugin );
+
+		$vars[ 'plugin' ] = $plugin;
+
+		return $vars;
+	}
 
 
 
@@ -161,6 +203,11 @@ class Lava_Page extends Lava_Base
 
 
 
+	/* Page dependancy functions */
+
+	function _add_dependancies() {
+		$this->_use_lava_stylesheet( 'styles' );
+	}
 
 
 
