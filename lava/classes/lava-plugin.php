@@ -20,6 +20,7 @@ class Lava_Plugin extends Lava_Base
 	public $_plugin_class_prefix = null;
 	public $_plugin_vendor;
 	public $_load_vendor = true;
+	public $_request_id;
 
 	public $_should_register_action_methods = true;
 
@@ -55,8 +56,8 @@ class Lava_Plugin extends Lava_Base
 
 		if( $this->_load_vendor ) {
 			require_once( dirname( $plugin_file_path ) .  '/vendor.php' );
-			$class_name = $this->_class_name( 'Vendor' );
-			$this->_plugin_vendor = $this->_construct_class( $class_name, array(), false );
+			$class_name = $this->_plugin_class( 'Vendor' );
+			$this->_plugin_vendor = $this->_construct_class( $class_name );
 		}
 
 		$this->_add_action( 'init', array( array( $this, 'test') ) );
@@ -81,8 +82,8 @@ class Lava_Plugin extends Lava_Base
 	{
 		$file_name = strtolower( str_replace( '_' , '-', $class_name ) );
 		$main_dirs = array(
-			dirname( __FILE__ ),		//check plugin _classes folder and sub dirs
-			dirname( $this->_get_plugin_file_path() ) . '/classes'   //check lava _classes folder and sub dirs
+			dirname( $this->_get_plugin_file_path() ) . '/classes',		//check plugin _classes folder and sub dirs
+			dirname( __FILE__ )   //check lava _classes folder and sub dirs
 
 		);
 
@@ -92,10 +93,12 @@ class Lava_Plugin extends Lava_Base
 			'extensions',
 			'external',
 			'pages',
+			'scenes',
 			'settings',
 			'skins',
 			'tables'
 		);
+
 
 
 		foreach( $main_dirs as $main_dir ) {
@@ -108,19 +111,69 @@ class Lava_Plugin extends Lava_Base
 		}
 	}
 
-	function _construct_class( $class_name, $args = array(), $should_prefix = true ) {
-		if( $should_prefix )
-			$class_name = "Lava_" . $class_name;
+	/*
+		Hook functions
+	*/
 
-		return new $class_name( $this, $args );
+	function _init() {
+		if( is_admin() ) {
+			$this->_do_lava_action( 'admin_init' );
+		}
 	}
 
+	function _register_settings() {
+		$settings = $this->_funcs()->_load_yaml( 'settings.yaml' );
+
+		foreach( $settings as $setting_id => $setting_vars ){
+			$setting_class = '';
+			if( ! is_array( $setting_vars ) ) {
+				$setting_vars = array();
+			}
+			if( array_key_exists( 'type', $setting_vars ) ) {
+				$setting_class = $setting_vars[ 'type' ];
+			}
+			$this->_settings()
+					->_add_setting( $setting_id, $setting_class )
+						->_parse_vars( $setting_vars );
+			;
+		}
+	}
+
+	function _register_pages() {
+		
+		$pages = $this->_funcs()->_load_yaml( 'admin_pages.yaml' );
+
+		foreach( $pages as $page_id => $page_vars ){
+			$page_class = '';
+			if( ! is_array( $page_vars ) ) {
+				$page_vars = array();
+			}
+			$section_title = $this->_get_plugin_name();
+			if( array_key_exists( 'type', $page_vars ) ) {
+				$page_class = $page_vars[ 'type' ];
+			}
+			if( array_key_exists( 'section_title', $page_vars ) ) {
+				$section_title = $page_vars[ 'section_title' ];
+			}
+			$section_id = strtolower( str_replace( ' ', '_', $section_title ) );
+			if( array_key_exists( 'section', $page_vars ) ) {
+				$section_id = $page_vars[ 'section' ];
+			}
+			$this->_pages()
+					->_add_section( $section_title, $section_id )
+					->_add_page( $page_id, $page_class, $section_id )
+						->_parse_vars( $page_vars );
+			;
+		}
+	}
+
+	
 
 	function _get_singleton( $class_name, $remove_child ) {
 		if( array_key_exists( $class_name , $this->_singletons ) ) {
 			return $this->_singletons[ $class_name ];
 		} else {
-			return $this->_singletons = $this->_construct_class( $class_name );
+			return $this->_singletons[ $class_name ] = $this->_construct_class( $class_name );
 		}
 	}
 
@@ -133,8 +186,11 @@ class Lava_Plugin extends Lava_Base
 		return $namespace;
 	}
 
-	function _class_name( $append = '' ) {
-		return $this->_plugin_class_prefix . '_' . $append;
+	function _get_plugin_class_prefix( $append = '' ) {
+		if( empty( $append ) )
+			return $this->_plugin_class_prefix;
+		else
+			return $this->_plugin_class_prefix . '_' . $append;
 	}
 
 
@@ -181,22 +237,22 @@ class Lava_Plugin extends Lava_Base
 	}
 
 	function _functions( $kill_child = true ) {
-		$class_name = 'Functions';
+		$class_name = $this->_lava_class('Functions');
 		return $this->_get_singleton( $class_name, $kill_child );
 	}
 
 	function _pages( $kill_child = true ) {
-		$class_name = 'Pages';
+		$class_name = $this->_lava_class('Pages');
 		return $this->_get_singleton( $class_name, $kill_child );
 	}
 
 	function _settings( $kill_child = true ) {
-		$class_name = 'Settings';
+		$class_name = $this->_lava_class('Settings');
 		return $this->_get_singleton( $class_name, $kill_child );
 	}
 
 	function _skins( $kill_child = true ) {
-		$class_name = "Skins";
+		$class_name = $this->_lava_class("Skins");
 		return $this->_get_singleton( $class_name, $kill_child );
 	}
 

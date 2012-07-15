@@ -10,9 +10,10 @@
  */
 class Lava_Pages extends Lava_Base
 {
-	protected $_admin_sections = array();
+	public $_admin_sections = array();
 	//special sections are the WordPress sections - this allows us to add a page to one of these sections
-	protected $_special_sections = array(
+
+	protected $_special_section_friendly_names = array(
 		'themes' => 'themes.php',
 		'tools' => 'tools.php',
 		'management' => 'tools.php',
@@ -26,23 +27,23 @@ class Lava_Pages extends Lava_Base
 		'pages' => 'edit.php?post_type=page',
 		'comments' => 'edit-comments.php'
 	);
-	protected $_admin_pages = array();
-	protected $_page_types = array(
-		'settings' => 'Settings'
-	);
+	
+	public $_admin_pages = array();
+	public $_admin_pages_by_section = array();
+
 	public $_styles = array();
 	public $_scripts = array();
 
 
 	function _construct() {
-		$this->_add_action( 'admin_menu', '_register_sections', 2 );
-
 		$this->_add_action( 'admin_enqueue_scripts', '_add_dependancies', 1 );
 		$this->_add_action( 'admin_enqueue_scripts', '_register_styles', 2 );
 		$this->_add_action( 'admin_enqueue_scripts', '_register_scripts', 2 );
 		$this->_add_action( 'admin_enqueue_scripts', '_enqueue_styles' );
 		$this->_add_action( 'admin_enqueue_scripts', '_enqueue_scripts' );
 	}
+
+	
 	
 
 	/*
@@ -57,19 +58,27 @@ class Lava_Pages extends Lava_Base
 
 
 	function _add_section(  $section_title = 'Undefined Section', $section_id = 'default' ) {
-		$section = array(
-			'section_id' 	=> $section_id,
-			'section_title' => $section_title
-		);
 
-		$this->_set_section( $section_id, $section );
+		if( $this->_section_exists( $section_id ) ) {
+			return $this->_r();
+		}
+
+		$class_name = $this->_class("Section");
+
+		$args = array(
+			$this,
+			$section_id,
+			$section_title
+		);
+		$this->_admin_sections[ $section_id ] = $this->_construct_class( $class_name, $args );
+
 
 		$this->_remember( '_section', $section_id );
 
 		return $this->_r();
 	}
 
-	function _add_page( $page_id, $page_type = '', $section_id = null ) {
+	function _add_page( $page_id, $page_class = '', $section_id = null ) {
 		$this->_kill_child();
 
 		// Sinces pages are actually sub pages we need a section to bind it to
@@ -80,16 +89,13 @@ class Lava_Pages extends Lava_Base
 			$section_id = $this->_recall( '_section' );
 		}
 
-		if( !array_key_exists( $section_id, $this->_special_sections ) ) {
-			$this->_set_section_default( $section_id, $page_id, false );
-		}
+		$section = $this->_get_section( $section_id );
+
+		$section->_set_default_page( $page_id, false );
 
 
 		if( ! $this->_page_exists( $page_id ) ) {
-			if( array_key_exists( strtolower( $page_type ) , $this->_page_types ) )
-				$class_name = $this->_page_types[ strtolower( $page_type ) ] . '_Page';
-			else
-				$class_name = 'Page';
+			$class_name = $this->_class( $page_class ) . '_Page';
 
 			$args = array(
 				$this, // $page_controller
@@ -99,6 +105,11 @@ class Lava_Pages extends Lava_Base
 
 			$the_page = $this->_admin_pages[ $page_id ] = $this->_construct_class( $class_name, $args );
 
+			if( ! array_key_exists( $section_id, $this->_admin_pages_by_section ) ) {
+				$this->_admin_pages_by_section[ $section_id ] = array();
+			}
+
+			$this->_admin_pages_by_section[ $section_id ][] = $page_id;
 		}
 
 
@@ -106,11 +117,20 @@ class Lava_Pages extends Lava_Base
 		return $this->_r();
 	}
 
+
+	/*
+		The difference between _get_page and _get_page_ is that the first adds the page object to memory and returns itself (like a jQuery chain) where as the second actually returns the object
+	*/
+
 	function _get_page( $page_id ) {
 		$this->_kill_child();
 		if( $this->_page_exists( $page_id ) )
 			$this->_set_child( $this->_admin_pages[ $page_id ] );
 		return $this->_r();
+	}
+
+	function _get_page_( $page_id ) {
+		return $this->_admin_pages[ $page_id ];
 	}
 
 	function _page_exists( $page_id ) {
@@ -125,6 +145,16 @@ class Lava_Pages extends Lava_Base
 		return $this->_admin_pages;
 	}
 
+	function _get_pages_by_section( $section_id ) {
+		$pages = array();
+		if( array_key_exists( $section_id , $this->_admin_pages_by_section ) ) {
+			foreach( $this->_admin_pages_by_section[ $section_id ] as $page_id ) {
+				$pages[$page_id] = $this->_get_page_( $page_id );
+			}
+		}
+		return $pages;
+	}
+
 	function _get_sections() {
 		return $this->_admin_sections;
 	}
@@ -137,46 +167,14 @@ class Lava_Pages extends Lava_Base
 	}
 
 	function _get_section( $section_id ) {
-		if( $this->_section_exists( $section_id ) )
+		if( $this->_section_exists( $section_id ) ) {
 			return $this->_admin_sections[ $section_id ];
-		else
-			return null;
-	}
-
-	function _get_section_slug( $section_id ) {
-		if( array_key_exists( $section_id , $this->_special_sections) ) {
-			return $this->_special_sections[ $section_id ];
+		} else {
+			//raise exception
+			print_r( $this->_admin_sections );
+			die( 'Could not find section with ID:' . $section_id );
 		}
-		if( ! $this->_section_exists( $section_id ) )
-			return null;
-
-		$section = $this->_get_section( $section_id );
-		extract( $section );
-
-		return "{$section_id}_{$section_default_page}";
 	}
-
-	function _set_section( $section_id, $section ) {
-		$this->_admin_sections[ $section_id ] = $section;
-		return $this->_r();
-	}
-
-	function _set_section_default( $section_id = null, $page_id = null, $should_overwrite = true ) {
-		if( is_null( $section_id ) )
-			$section_id = $this->_recall( '_section' );
-		if( is_null( $page_id ) )
-			$page_id = $this->_get_child()->_get_page_id();
-		$section = $this->_get_section( $section_id );
-		if( $should_overwrite or ! array_key_exists( 'section_default_page' , $section) )
-			$section[ 'section_default_page' ] = $page_id;
-
-		$this->_set_section( $section_id, $section );
-		return $this->_r();
-	}
-
-
-
-
 
 
 	function _add_settings_page( $page_id = 'settings', $section_id = null ) {
@@ -202,38 +200,18 @@ class Lava_Pages extends Lava_Base
 
 
 
-	function _register_sections() {
-		$sections = $this->_get_sections();
-
-		foreach( $sections as $section ) {
-			# @todo - add filter for capabilities (get minimum capabilities required)
-			extract( $section );
-
-			$section_slug = $this->_get_section_slug( $section_id );
-			$page_title = $this->_get_page( $section_default_page )->_get_page_title();
-
-			add_menu_page(
-				$page_title,
-				$section_title,
-				'manage_options',
-				$section_slug,
-				array( $this, '_blank' ) 
-			);
-		}
-	}
-
-
-
-
-
-
-
 	/*
 		Dependancies
 	*/
 
 	function _add_dependancies() {
-		$this->_add_lava_stylesheet( 'styles', 'styles.css' );
+		$this->_add_lava_stylesheet( 'lava', 'lava.css' );
+		$this->_add_lava_script( 'html5shiv', 'html5shiv.js' );
+		$this->_add_lava_script( 'debug', 'ba-debug.min.js' );
+		$this->_add_lava_script( 'history', 'history.js' );
+		$this->_add_lava_script( 'address', 'address.js' );
+		$this->_add_lava_script( 'modernizr', 'modernizr-2.5.3.js', array(), '2.5.3' );
+		$this->_add_lava_script( 'lava', 'lava.js', array( 'jquery', $this->_namespace( 'debug' ), $this->_namespace( 'modernizr' ), $this->_namespace( 'history' ) ) );
 		$this->_do_lava_action( '_add_dependancies' );
 	}
 
@@ -329,12 +307,12 @@ class Lava_Pages extends Lava_Base
 		if( $asset_folder ) {
 			$src = plugins_url( $asset_folder . $src, $this->_get_plugin_file_path() );
 		}
-		$style = compact( 'handle', 'src', 'deps', 'ver', 'in_footer', 'should_enqueue' );
-		$this->_styles[ $handle ] = $style;
+		$script = compact( 'handle', 'src', 'deps', 'ver', 'in_footer', 'should_enqueue' );
+		$this->_scripts[ $handle ] = $script;
 	}
 
 	function _script_exists( $handle ) {
-		return array_key_exists( $handle, $this->_styles );
+		return array_key_exists( $handle, $this->_scripts );
 	}
 
 	function _use_script( $handle, $should_namespace = false ) {
@@ -343,7 +321,7 @@ class Lava_Pages extends Lava_Base
 		}
 
 		if( $this->_script_exists( $handle ) ) {
-			$this->_styles[ $handle ]['should_enqueue'] = true;
+			$this->_scripts[ $handle ]['should_enqueue'] = true;
 		}
 		return $this->_r();
 	}
@@ -361,7 +339,7 @@ class Lava_Pages extends Lava_Base
 	function _register_scripts() {
 		foreach( $this->_scripts as $script ) {
 			extract( $script );
-			wp_register_script( $handle, $src, $deps, $ver, $media );
+			wp_register_script( $handle, $src, $deps, $ver, $in_footer );
 		}
 	}
 

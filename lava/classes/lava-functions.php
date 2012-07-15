@@ -4,7 +4,19 @@ class Lava_Functions extends Lava_Base
 	function _register_action_methods( $object ) {
 		$hooks_with_same_method = array(
 			'init',
-			'admin_init'
+			'admin_menu',
+			'admin_bar_menu'
+		);
+
+		$other_hooks = array(
+		);
+
+		$lava_hooks = array(
+			'admin_init' => array(
+				'admin_init',
+				'register_settings',
+				'register_pages',
+			)
 		);
 
 		foreach( $hooks_with_same_method as $hook ) {
@@ -14,12 +26,7 @@ class Lava_Functions extends Lava_Base
 			}
 		}
 
-		$other_hooks = array(
-			'init' 			=> array(
-				'register_settings',
-				'register_pages',
-			)
-		);
+		
 
 
 		foreach( $other_hooks as $hook => $methods ) {
@@ -32,17 +39,31 @@ class Lava_Functions extends Lava_Base
 				}
 			}
 		}
+
+		foreach( $lava_hooks as $hook => $methods ) {
+			if( ! is_array( $methods ) )
+				$methods = array( $methods );
+			foreach( $methods as $method ) {
+				if( method_exists( $object, "_{$method}" ) ) {
+					$callback = array( array( $object, "_{$method}" ) );
+					$this->_add_lava_action( $hook, $callback );
+				}
+			}
+		}
 	}
 
 	function _load_dependancy( $dependancy ) {
 		// allows for a more flexible dependancy loader where filenames do not correspond to class names
 		$dependancies = array(
-			'Twig_Autoloader' => dirname( __file__ ) . '/twig/Autoloader.php'
+			'Twig_Autoloader' => dirname( __file__ ) . '/twig/Autoloader.php',
+			'Spyc' => dirname( __file__ ) . '/spyc/spyc.php'
 		);
 
 		if( ! class_exists( $dependancy ) ) {
 			if( array_key_exists( $dependancy, $dependancies) ) {
 				require_once( $dependancies[ $dependancy ] );
+			} else {
+				die( 'Dependancy: "' . $dependancy . '" could not be loaded' );
 			}
 		}
 
@@ -53,6 +74,44 @@ class Lava_Functions extends Lava_Base
 		// Raise Dependancy not found error
 	}
 
+
+	/*
+		Language extensions
+	*/
+
+	function _make_associative( $array, $default_key ) {
+		if( count( $array ) == 0 ) {
+			return array();
+		}
+		if( ! $this->_is_associative( $array ) ) {
+			return array( $default_key => $array );
+		}
+		return $array;
+	}
+
+	// http://stackoverflow.com/questions/173400/php-arrays-a-good-way-to-check-if-an-array-is-associative-or-sequential
+	function _is_associative( $arr ) {
+		return array_keys($arr) !== range(0, count($arr) - 1);
+	}
+
+	function _load_yaml( $file ) {
+		$this->_load_dependancy( 'Spyc' );
+		$file = dirname( $this->_get_plugin_file_path() ) . '/' . $file;
+		if( file_exists( $file ) ) {
+			return Spyc::YAMLLoad( $file );
+		}
+		return array();
+	}
+
+
+
+	/*
+		Manipulation
+	*/
+
+	
+
+	
 
 
 

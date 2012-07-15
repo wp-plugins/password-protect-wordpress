@@ -10,11 +10,22 @@
  */
 class Lava_Page extends Lava_Base
 {
+	public $_should_register_action_methods = true;
+
 	protected $_is_network_page = false;
 
 	protected $_page_controller;
 	protected $_page_id;
 	protected $_section_id;
+
+	protected $_page_scenes = array();
+	protected $_local_scenes = array();
+	protected $_external_scenes = array();
+	public $_default_scene_id;
+
+	public $_scene_types = array(
+
+	);
 
 	protected $_page_hook;
 
@@ -22,8 +33,11 @@ class Lava_Page extends Lava_Base
 	public $_page_scripts = array();
 
 	public $_template_directories = array();
-	public $_twig_config = array();
 	public $_twig_template = 'base.twig';
+
+	// Template manipulation
+
+	public $_show_actionbar = true;
 
 	function _construct( $page_controller, $page_id, $section_id ) {
 		$this->_page_controller = $page_controller;
@@ -38,18 +52,40 @@ class Lava_Page extends Lava_Base
 		if ( is_dir( $plugin_dir ) ) {
 			array_unshift( $this->_template_directories, $plugin_dir );
 		}
-		$this->_set_return_object( $this->_page_controller );
+		$this->_set_return_object( $this );
 
 		$this->_set_parent( $this->_page_controller );
 
 		$this->_add_action( 'admin_menu', '_register_page', 3 );
-		$this->_add_action( 'admin_menu', '_register_get_template_variables', 4 );
 
 		$this->_add_lava_action( '_add_dependancies' );
+
+		$this->_load_defaults();
 	}
 
-	function _get_hook_identifier() {
-		return '-page:' . $this->_get_page_slug();
+	/*
+		
+	*/
+
+	function _admin_menu() {
+		$this->_register_scenes();
+	}
+
+
+
+	
+
+	function _serialize() {
+		$old_vars = parent::_serialize();
+		$new_vars = array(
+			'menu_title'     => $this->_get_menu_title(),
+			'page_title'     => $this->_get_page_title(),
+			'page_id'        => $this->_get_page_id(),
+			'section_id'     => $this->_get_section_id(),
+			'url'            => $this->_get_page_url(),
+			'show_actionbar' => $this->_show_actionbar
+		);
+		return array_merge( $old_vars, $new_vars );
 	}
 
 
@@ -57,6 +93,20 @@ class Lava_Page extends Lava_Base
 	/*
 		Accessors
 	*/
+
+	function _load_defaults() {
+		
+	}
+
+	function _parse_vars( $page_vars ) {
+		foreach( $page_vars as $key => $value ) {
+			switch( $key ) {
+				case 'title':
+					$this->_set_page_title( $value );
+				break;
+			}
+		}
+	}
 
 
 	function _get_section_id() {
@@ -67,12 +117,19 @@ class Lava_Page extends Lava_Base
 		return $this->_page_id;
 	}
 
+	function _get_page_nonce() {
+		if( ! array_key_exists('nonce', $_REQUEST) ) {
+			return '';
+		}
+		return $_REQUEST['nonce'];
+	}
+
 	function _get_page_url() {
-		$page_id = $this->_get_page_id();
+		$page_slug = $this->_get_page_slug();
 		if( $this->_is_network_page and function_exists( 'network_admin_url' ) )
-			return network_admin_url( "admin.php?page={$slug}" );
+			return network_admin_url( "admin.php?page={$page_slug}" );
 		else
-			return admin_url( "admin.php?page={$slug}" );
+			return admin_url( "admin.php?page={$page_slug}" );
 	}
 
 	function _get_page_title() {
@@ -94,7 +151,80 @@ class Lava_Page extends Lava_Base
 	}
 
 	function _get_page_slug() {
-		return $this->_get_section_id() . '_' . $this->_get_page_id();
+		$section = $this->_page_controller->_get_section( $this->_get_section_id() );
+		return  $section->_get_section_slug_fragment() . '_' . $this->_get_page_id();
+	}
+
+	/*
+		Hook functions
+	*/
+
+	function _register_hooks() {
+		parent::_register_hooks();
+		$this->_register_actions( '_do_page', array(
+				'default_scene'
+		));
+		$this->_register_filters( '_get_template_variables', array(
+			'plugin_meta',
+			'pages',
+			'scenes'
+		));
+	}
+
+	function _get_hook_identifier() {
+		return '-page:' . $this->_get_page_slug();
+	}
+
+
+	/*
+		Scene/act functions
+	*/
+
+	function _add_scene( $scene_id, $class = '' , $scope = 'local') {
+		if( ! $this->_scene_exists( $scene_id ) ){
+			$class_name = $this->_class( $class ) . '_Scene';
+			$args = array(
+				$this, // parent_page
+				$scene_id,
+				$scope
+			);
+			$this->_page_scenes[ $scene_id ] = $scene = $this->_construct_class( $class_name, $args );
+			if( $scope == 'external' )
+				$this->_external_scenes[] = $scene_id;
+			else
+				$this->_local_scenes[] = $scene_id;
+		}
+		return $this->_get_scene( $scene_id );
+	}
+
+	function _scene_exists( $scene_id ) {
+		return array_key_exists( $scene_id, $this->_page_scenes);
+	}
+
+	function _get_scene( $scene_id ) {
+		$this->_set_child( $this->_page_scenes[ $scene_id ] );
+		return $this->_r();
+	}
+
+	function _get_scene_( $scene_id ) {
+		return  $this->_page_scenes[ $scene_id ];
+	}
+
+	function _get_default_scene_id() {
+		$scenes = $this->_get_scenes();
+		$default = '';
+		if( count($scenes) > 0 ) {
+			$scene = reset($scenes);
+			$default = $scene->_get_scene_id();
+		}
+		if( !empty( $this->_default_scene_id ) ) {
+			$default = $this->_default_scene_id;
+		}
+		return $this->_recall( '_default_scene_id', $default );
+	}
+
+	function _get_scenes() {
+		return $this->_page_scenes;
 	}
 
 
@@ -108,9 +238,15 @@ class Lava_Page extends Lava_Base
 		Flow functions
 	*/
 
+	function _register_scenes() {
+		//should be overloaded to allow the registering of scenes
+		
+	}
+
 	function _register_page() {
 
-		$parent_slug = $this->_page_controller->_get_section_slug( $this->_section_id );
+		$section = $this->_page_controller->_get_section( $this->_get_section_id() );
+		$parent_slug = $section->_get_section_slug();
 		$page_title = $this->_get_page_title();
 		$menu_title = $this->_get_menu_title();
 		$capability = 'manage_options'; # @todo add capability handling
@@ -127,59 +263,52 @@ class Lava_Page extends Lava_Base
 			$function
 		);
 
+		$this->_register_pagehook_actions();
+
+	}
+
+	function _register_pagehook_actions() {
+		$plugin_page = $this->_page_hook;
+		$this->_add_action( "load-{$plugin_page}", '_do_page_load' );
+	}
+
+	// if the page is accessed without the 'scene' query param then we should add it
+
+	function _do_page_load() {
 	}
 
 	function _do_page() {
-		$this->_funcs()->_load_dependancy( 'Twig_Autoloader' );
+		$hook = $this->_hook( '_do_page' );
+		$this->_do_lava_action( $hook );
 		$this->_initialize_twig();
 		$template = $this->_load_template();
-		$variables = $this->_get_template_variables();
+		$variables = $this->_get_template_variables( $this->_serialize() );
+
 		$template->display( $variables );
 	}
 
-
-
-	/* 
-		Template functions
-	*/
-
-	function _get_template_directories() {
-		return $this->_template_directories;
-	}
-
-	function _get_template_variables() {
-		$hook = $this->_hook( '_get_template_variables' );
-		return $this->_apply_lava_filters( $hook, array() );
-	}
-
-	function _initialize_twig() {
-		$template_directories = $this->_get_template_directories();
-
-		$this->_twig_loader = new Twig_Loader_Filesystem( $template_directories );
-		$this->_twig_environment = new Twig_Environment( $this->_twig_loader, $this->_twig_config );
-	}
-
-	function _load_template( $template = null ) {
-		if( is_null( $template ) ) {
-			$template = $this->_twig_template;
+	function _do_page__default_scene() {
+		$default_scene_id = $this->_get_default_scene_id();
+		if( ! array_key_exists('scene', $_REQUEST) ) {
+			$_REQUEST['scene'] = $default_scene_id;
 		}
-		return $this->_twig_environment->loadTemplate( $template );
+
 	}
+
+
+
+	
+
+	/*#######################################
+		Template variable functions
+	*/#######################################
+
+
+
 
 	/*
-		Template variable functions
+		Exposes Plugin info to template
 	*/
-
-	function _register_get_template_variables() {
-		$hook = $this->_hook( '_get_template_variables' );
-		$filters = array(
-			'plugin_meta'
-		);
-		foreach( $filters as $filter ) {
-			$this->_add_lava_filter( $hook, "_get_template_variables__{$filter}" );
-		}
-	}
-
 	function _get_template_variables__plugin_meta( $vars ) {
 		$plugin = array(
 			'id'      => $this->_get_plugin_id(),
@@ -190,6 +319,38 @@ class Lava_Page extends Lava_Base
 		$plugin = $this->_apply_lava_filters( $hook, $plugin );
 
 		$vars[ 'plugin' ] = $plugin;
+
+		return $vars;
+	}
+
+
+	/*
+		Exposes array of pages to template
+	*/
+	function _get_template_variables__pages( $vars ) {
+		$page_objects = $this->_page_controller->_get_pages_by_section( $this->_get_section_id() );
+		$pages = array();
+		$page_id = $this->_get_page_id();
+		foreach( $page_objects as $page_object ) {
+			$page = $page_object->_serialize();
+			$page['link'] = $page['url'];
+			if( $page['page_id'] == $page_id ) {
+				$page['selected'] = true;
+			} else {
+				$page['selected'] = false;
+			}
+			$pages[] = $page;
+		}
+		$hook = $this->_hook( '_get_template_variables', '_pages' );
+		$pages = $this->_apply_lava_filters( $hook, $pages );
+		$vars['pages'] = $pages;
+		return $vars;
+	}
+
+	function _get_template_variables__scenes( $vars ) {
+		$scenes = $this->_get_scenes();
+		// currently the whole array of objects is passed 
+		$vars['scenes'] = $scenes;
 
 		return $vars;
 	}
@@ -206,8 +367,33 @@ class Lava_Page extends Lava_Base
 	/* Page dependancy functions */
 
 	function _add_dependancies() {
-		$this->_use_lava_stylesheet( 'styles' );
+		$this->_use_lava_stylesheet( 'lava' );
+		$this->_use_lava_script( 'html5shiv' );
+		$this->_use_lava_script( 'lava' );
+		$this->_use_lava_script( 'modernizr' );
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
