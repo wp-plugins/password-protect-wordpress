@@ -16,9 +16,6 @@ class private_blog_callbacks extends lavaBase
 		$hookTag = "template_redirect";
 		$this->addWPAction( $hookTag, "doHeadActions", 2 );
 
-		$hookTag = "init";
-		$this->addWPAction( $hookTag, "doInitActions", 2 );
-
 		$hookTag = "displayLoginPage";
 		$this->addAction( $hookTag );
 
@@ -111,6 +108,8 @@ class private_blog_callbacks extends lavaBase
 		if( $is_enabled == "on" and $add_logout == "on" ) {
 			$this->addLogoutLink();
 		}
+
+		doInitActions();
 	}
 
 
