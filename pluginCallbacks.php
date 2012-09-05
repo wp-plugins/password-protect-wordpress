@@ -277,6 +277,7 @@ class private_blog_callbacks extends lavaBase
 		$this->setCookie();
 		$redirect = $_POST[ $this->_slug( "redirect" ) ];
 		wp_redirect( $redirect );
+		exit;
 	}
 
 	function loginRejected() {
