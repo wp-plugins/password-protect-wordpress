@@ -109,7 +109,7 @@ class private_blog_callbacks extends lavaBase
 			$this->addLogoutLink();
 		}
 
-		doInitActions();
+		$this->doInitActions();
 	}
 
 
