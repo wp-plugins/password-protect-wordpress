@@ -13,9 +13,6 @@ class private_blog_callbacks extends lavaBase
 		$hookTag = "get_header";
 		$this->addWPAction( $hookTag, "doHeadActions", 2 );
 
-		$hookTag = "template_redirect";
-		$this->addWPAction( $hookTag, "doHeadActions", 2 );
-
 		$hookTag = "displayLoginPage";
 		$this->addAction( $hookTag );
 
@@ -100,6 +97,9 @@ class private_blog_callbacks extends lavaBase
 		);
 		if( $rss_public != "on" ) {
 			$this->addWPAction( $hookTags, "disableRssFeed", 1, true );
+
+			$hookTag = "template_redirect";
+			$this->addWPAction( $hookTag, "doHeadActions", 2 );
 		}
 
 		$is_enabled = $this->_settings()->fetchSetting( "enabled" )->getValue();
