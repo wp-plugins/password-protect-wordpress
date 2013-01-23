@@ -119,3 +119,7 @@ body {
 .incorrect_credentials .incorrect-credentials {
 	display: block;
 }
+
+.security_providor .security-providor {
+	display: block;
+}
