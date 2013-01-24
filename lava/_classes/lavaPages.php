@@ -279,20 +279,7 @@ class lavaPages extends lavaBase
      */
     function registerNetworkPages()
     {
-        $defaultPage = $this->defaultPage;
-        //register the main page
-        add_menu_page( $defaultPage->get( "title" ),  $this->_name(), $defaultPage->get( "capability" ), $defaultPage->get( "slug" ), array( $this, "blank" ) );
-
-        $parentSlug = $defaultPage->get( "slug" );
-
-        //register each subpage
-        foreach( $this->adminPages as $page )
-        {
-            if( true === $page->multisiteSupport )//if they support multisite
-            {
-                $page->registerPage( $parentSlug );
-            }
-        }
+        
     }
 
 
