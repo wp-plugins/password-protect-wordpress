@@ -330,7 +330,7 @@ class private_blog_callbacks extends lavaBase
 
 		$pluginVars['form_inputs'] = apply_filters( $this->_slug( "formInputs" ), array() );
 		$pluginVars['watermark'] = "Security Software provided by Platinum Mirror LTD (Programmer: Daniel Chatfield), Version: {$pluginVersion}, License: Consumer";
-		$pluginVars['form_action'] = get_home_url('');
+		$pluginVars['form_action'] = get_home_url(null,'?login');
 
 		return $pluginVars;
 	}
