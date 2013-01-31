@@ -3,8 +3,8 @@ Contributors: volcanicpixels
 Donate link: http://www.spiders-design.co.uk/donate/
 Tags: password,protect,password protect,wordpress,blog, security
 Requires at least: 3.3.1
-Tested up to: 3.5
-Stable tag: 4.10.3
+Tested up to: 3.5.1
+Stable tag: 4.10.4
 
 This plugin password protects your wordpress blog with a single password.
 
@@ -14,11 +14,12 @@ Want to make your blog private from prying eyes? Well my password protection plu
 
 Features:
 
-No user accounts - just a single password.
+No user accounts - just a single password (or multiple passwords).
 Easy to use admin panel.
-Internationalized to make translations easy.
+Choose which pages to protect
 
-Customize the login page (with more skins added all the time)
+
+Customize the login page
 
 
 Please review and vote that it works.
@@ -163,3 +164,7 @@ This section describes how to install the plugin and get it working.
 = 4.10.3 =
 
 * A fix for the bug where login attempts would be ignored when wp installation is in sub directory.
+
+= 4.10.4
+
+* Added support for selecting which pages/posts to protect

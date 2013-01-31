@@ -5,7 +5,7 @@ class private_blog_callbacks extends lavaBase
 	{
 		$this->translation();
 	}
-	
+
 	function init() {
 		$hookTag = "settingInnerPre";
 		$this->addFilter( "{$hookTag}-tag/password-label", "addLabelHtml" );
@@ -34,7 +34,7 @@ class private_blog_callbacks extends lavaBase
 
 		$hookTag = "isLoginAccepted";
 		$this->addFilter( $hookTag );
-		
+
 		$hookTag = "loginAccepted";
 		$this->addAction( $hookTag );
 
@@ -99,7 +99,7 @@ class private_blog_callbacks extends lavaBase
 			$this->addWPAction( $hookTags, "disableRssFeed", 1, true );
 
 			$hookTag = "template_redirect";
-			$this->addWPAction( $hookTag, "doHeadActions", 2 );
+			//$this->addWPAction( $hookTag, "doHeadActions", 2 );
 		}
 
 		$is_enabled = $this->_settings()->fetchSetting( "enabled" )->getValue();
@@ -152,61 +152,83 @@ class private_blog_callbacks extends lavaBase
 		;
 	}
 
-    function addLabelHtml( $html )
-    {
-        $pluginSlug = $this->_slug();
+	function addLabelHtml( $html )
+	{
+		$pluginSlug = $this->_slug();
 
-        $html = '<div class="js-only custom-password-label clearfix tiptip" onclick="alert(\'not implemented yet\')" title="' . __( "Click to change the name and colour of this password. These will be used in the Access Logs.", $pluginSlug ) . '"><span>undefined</span></div>' .$html;
-        return $html;
-    }
+		$html = '<div class="js-only custom-password-label clearfix tiptip" onclick="alert(\'not implemented yet\')" title="' . __( "Click to change the name and colour of this password. These will be used in the Access Logs.", $pluginSlug ) . '"><span>undefined</span></div>' .$html;
+		return $html;
+	}
 
-    function doInitActions() {
-	$isLoginRequest = $this->runFilters( "isLoginRequest", false);
-        if( true === $isLoginRequest )
-        {
+	function doInitActions() {
+		$isLoginRequest = $this->runFilters( "isLoginRequest", false);
+		if( true === $isLoginRequest )
+		{
 			//the user is attempting to login
-            $isLoginAccepted = apply_filters( $this->_slug( "isLoginAccepted" ), false );
+			$isLoginAccepted = apply_filters( $this->_slug( "isLoginAccepted" ), false );
 
-            if( true === $isLoginAccepted ) {
-                do_action( $this->_slug( "loginAccepted" ) );
-            } else {
-                do_action( $this->_slug( "loginRejected" ) );
-            }
-        }
+			if( true === $isLoginAccepted ) {
+				do_action( $this->_slug( "loginAccepted" ) );
+			} else {
+				do_action( $this->_slug( "loginRejected" ) );
+			}
+		}
 
-        $isLogoutRequest = $this->runFilters( "isLogoutRequest", false );
+		$isLogoutRequest = $this->runFilters( "isLogoutRequest", false );
 
-        if( true === $isLogoutRequest )
-        {
+		if( true === $isLogoutRequest )
+		{
 			//the user is attempting to logout
-            do_action( $this->_slug( "doLogout" ) );
-        }
-    }
+			do_action( $this->_slug( "doLogout" ) );
+		}
+	}
 	/**
 	 * doHeadActions function
 	 *	Wrapper function that calls all hooks - isn't using getHeader() as we need priority here
 	 *
 	 */
-    function doHeadActions()
-    {
+	function doHeadActions()
+	{
 		$isEnabled = $this->_settings()->fetchSetting( "enabled" )->getValue();
 		if( $isEnabled == "off" ) {
 			//protection is disabled
 			return;
 		}
-        
 
-        $isLoggedIn = apply_filters( $this->_slug( "isLoggedIn" ), false );
+		$unprotect_certain_pages = $this->_settings()->fetchSetting( "unprotect_certain_pages" )->getValue();
+		$protect_certain_pages = $this->_settings()->fetchSetting( "protect_certain_pages" )->getValue();
 
-        if( true === $isLoggedIn ) {
-            //refresh logged in cookies
+		if( $unprotect_certain_pages == "on" ) {
+			$pages = $this->_settings()->fetchSetting( "pages_to_unprotect" )->getValue();
+			$pages = explode(',', $pages);
+
+			if( is_single($pages) ) {
+				return;
+			}
+		}
+
+		if( $protect_certain_pages == "on" ) {
+			$pages = $this->_settings()->fetchSetting( "pages_to_protect" )->getValue();
+			$pages = explode(',', $pages);
+
+			if( !is_single($pages) ) {
+				return;
+			}
+		}
+
+
+
+		$isLoggedIn = apply_filters( $this->_slug( "isLoggedIn" ), false );
+
+		if( true === $isLoggedIn ) {
+			//refresh logged in cookies
 			$this->setCookie();
-            return;
-        } else {
+			return;
+		} else {
 			do_action( $this->_slug( "displayLoginPage" ) );
 			exit;
-        }
-    }
+		}
+	}
 
 	function isLoginRequest( $current ) {
 		//should only alter value if there is a login as default is false so if it is something else then it is by design
@@ -244,16 +266,16 @@ class private_blog_callbacks extends lavaBase
 		global $maxPasswords;//get the maxPasswords constant (can be changed by an extension)
 		$password = $_POST[ $this->_slug( "password" ) ];
 		$password = $this->runFilters( "passwordFilter", $password );//allows extensions to do weird stuff like hash the damn thing
-		
+
 		$multiplePasswords = $this->_settings()->fetchSetting( "multiple_passwords" )->getValue();
-			
+
 		$limit = 1;
 		if( $multiplePasswords == "on" ) {
 			$limit = $maxPasswords;
 		}
 
 		for( $i = 1; $i <= $limit; $i++ ) {
-			
+
 			$passToCheck = $this->_settings()->fetchSetting( "password".$i."_value" )->getValue();
 			if( !empty( $passToCheck ) and $passToCheck == $password ) {
 				$passwordName = $this->_settings()->fetchSetting( "password{$i}_name" )->getValue();
@@ -304,10 +326,10 @@ class private_blog_callbacks extends lavaBase
 
 	function isLoggedIn( $current ) {
 		$cookieName = $this->_slug( "loggedin" );
-		
+
 		if( array_key_exists( $cookieName, $_COOKIE ) ) {
 			$nonce = $_COOKIE[ $cookieName ];
-			
+
 			$nonceName = $this->_slug( "loggedin" );
 			if( wp_verify_nonce( $nonce, $nonceName ) ) {
 				$current = true;
@@ -344,7 +366,7 @@ class private_blog_callbacks extends lavaBase
 
 		return $formInputs;
 	}
-	
+
 	function addRedirectField( $formInputs ) {
 		$redirect = add_query_arg( "loggedin", "" );
 		$redirect = remove_query_arg( "loggedout", $redirect );
@@ -367,13 +389,13 @@ class private_blog_callbacks extends lavaBase
 			"label" => __( "Password", $this->_slug() ),
 			"class" => "input"
 		);
-		
+
 		return $formInputs;
 	}
 	/*
 		Adds the submit field to the login form
 	*/
-	
+
 	function addSubmitField( $formInputs ) {
 		$formInputs[] = array(
 			"type" => "submit",
@@ -381,13 +403,13 @@ class private_blog_callbacks extends lavaBase
 			"id" => "submit",
 			"value" => __( "Login", $this->_slug() )
 		);
-		
+
 		return $formInputs;
 	}
-	
+
 	function disableRssFeed() {
 		$isLoggedIn = apply_filters( $this->_slug( "isLoggedIn" ), false );
-		
+
 		if( $isLoggedIn === true ) {
 			return;
 		} else {
@@ -431,7 +453,7 @@ class private_blog_callbacks extends lavaBase
 		Handles the backend stuff to make sure only the options that can actually be changed are shown to user and makes sure that theme changes don't break it.
 	*/
 	function logoutLinkBackend() {
-		
+
 		$locations = get_nav_menu_locations();// get the locations set by the theme
 		if( !is_array( $locations ) ) {
 			$locations = array();
@@ -473,7 +495,7 @@ class private_blog_callbacks extends lavaBase
 			$this->_settings()->fetchSetting( "logout_link_menu" )->updateValue( $defaultValue );
 		}
 	}
-	
+
 
 	/*
 		Table array Filters
@@ -568,6 +590,6 @@ class private_blog_callbacks extends lavaBase
 		return date( "D, d F Y H:i", $timeStamp );
 
 	}
-	
+
 }
 ?>
