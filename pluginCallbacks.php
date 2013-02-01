@@ -202,7 +202,7 @@ class private_blog_callbacks extends lavaBase
 			$pages = $this->_settings()->fetchSetting( "pages_to_unprotect" )->getValue();
 			$pages = explode(',', $pages);
 
-			if( is_single($pages) ) {
+			if( is_single($pages) or is_page($pages) ) {
 				return;
 			}
 		}
@@ -211,7 +211,7 @@ class private_blog_callbacks extends lavaBase
 			$pages = $this->_settings()->fetchSetting( "pages_to_protect" )->getValue();
 			$pages = explode(',', $pages);
 
-			if( !is_single($pages) ) {
+			if( !is_single($pages) or !is_page($pages) ) {
 				return;
 			}
 		}

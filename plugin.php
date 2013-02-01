@@ -3,7 +3,7 @@
 Plugin Name: Private Blog
 Plugin URI: http://www.volcanicpixels.com/password-protect-wordpress-plugin/
 Description: Private Blog is a wordpress plugin which allows you to password protect all of your wordpress blog including all posts and feeds with a single password.
-Version: 4.10.4
+Version: 4.10.5
 Author: Daniel Chatfield
 Author URI: http://www.danielchatfield.com
 License: GPLv2
@@ -13,7 +13,7 @@ License: GPLv2
 include( dirname( __FILE__ ) ."/lava/lava.php" );
 
 $pluginName = "Private Blog";
-$pluginVersion = "4.10.4";
+$pluginVersion = "4.10.5";
 
 $thePlugin = lava::newPlugin( __FILE__, $pluginName, $pluginVersion );
 $pluginSlug = $thePlugin->_slug();
@@ -120,14 +120,14 @@ $thePlugin->_settings()
 		->setName( __( "Only protect certain pages", $pluginSlug ) )
 		->setType( "checkbox" )
 		->setDefault( "off" )
-		->setHelp( __( "When enabled, only the pages with the IDs listed will be protected - enter as a comma delimited list.", $pluginSlug ) )
+		->setHelp( __( "When enabled, only the pages with the IDs listed will be protected - enter as a comma delimited list. The ID can be found by going to the post editor and looking at the URL.", $pluginSlug ) )
 		->addTag( 'is-premium' )
 		->settingToggle( "pages_to_protect")
 	->addSetting( "pages_to_protect" )
 		->setName( __( "IDs of pages/posts to protect", $pluginSlug ) )
 		->setType( "text" )
 		->setDefault( "" )
-		->setHelp( __( "Enter the IDs of the pages you wish to protect as a comma delimited list.", $pluginSlug ) )
+		->setHelp( __( "Enter the IDs of the pages you wish to protect as a comma delimited list. The ID can be found by going to the post editor and looking at the URL.", $pluginSlug ) )
 		->addTag( 'is-premium' )
 	->addSetting( "unprotect_certain_pages" )
 		->setName( __( "Do not protect certain pages", $pluginSlug ) )
