@@ -3,7 +3,7 @@
 Plugin Name: Private Blog
 Plugin URI: http://www.volcanicpixels.com/password-protect-wordpress-plugin/
 Description: Private Blog is a wordpress plugin which allows you to password protect all of your wordpress blog including all posts and feeds with a single password.
-Version: 4.10.6
+Version: 4.10.7
 Author: Daniel Chatfield
 Author URI: http://www.danielchatfield.com
 License: GPLv2
@@ -13,7 +13,7 @@ License: GPLv2
 include( dirname( __FILE__ ) ."/lava/lava.php" );
 
 $pluginName = "Private Blog";
-$pluginVersion = "4.10.6";
+$pluginVersion = "4.10.7";
 
 $thePlugin = lava::newPlugin( __FILE__, $pluginName, $pluginVersion );
 $pluginSlug = $thePlugin->_slug();
@@ -129,6 +129,12 @@ $thePlugin->_settings()
 		->setDefault( "" )
 		->setHelp( __( "Enter the IDs of the pages you wish to protect as a comma delimited list. The ID can be found by going to the post editor and looking at the URL.", $pluginSlug ) )
 		->addTag( 'is-premium' )
+	->addSetting( "patterns_to_protect" )
+		->setName( __( "Regular expressions of content to protect", $pluginSlug ) )
+		->setType( "text" )
+		->setDefault( "" )
+		->setHelp( __( "Enter a pattern like '/members/*' or '/internal/ - proceeding forward slash is required'", $pluginSlug ) )
+		->addTag( 'is-premium' )
 	->addSetting( "unprotect_certain_pages" )
 		->setName( __( "Do not protect certain pages", $pluginSlug ) )
 		->setType( "checkbox" )
@@ -141,6 +147,12 @@ $thePlugin->_settings()
 		->setType( "text" )
 		->setDefault( "" )
 		->setHelp( __( "Enter the IDs of the pages you wish to make public as a comma delimited list.", $pluginSlug ) )
+		->addTag( 'is-premium' )
+	->addSetting( "patterns_to_unprotect" )
+		->setName( __( "Regular expressions of content to not protect", $pluginSlug ) )
+		->setType( "text" )
+		->setDefault( "" )
+		->setHelp( __( "Enter a pattern like '/members/*' or '/internal/ - proceeding forward slash is required'", $pluginSlug ) )
 		->addTag( 'is-premium' )
 	->addSetting( "record_logs" )
 		->setName( __( "Create a log of all logins and logouts", $pluginSlug ) )

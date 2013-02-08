@@ -201,8 +201,9 @@ class private_blog_callbacks extends lavaBase
 		if( $unprotect_certain_pages == "on" ) {
 			$pages = $this->_settings()->fetchSetting( "pages_to_unprotect" )->getValue();
 			$pages = explode(',', $pages);
+			$patterns = array();
 
-			if( is_single($pages) or is_page($pages) ) {
+			if( $this->pageMatch($pages, $patterns, true) ) {
 				return;
 			}
 		}
@@ -210,8 +211,9 @@ class private_blog_callbacks extends lavaBase
 		if( $protect_certain_pages == "on" ) {
 			$pages = $this->_settings()->fetchSetting( "pages_to_protect" )->getValue();
 			$pages = explode(',', $pages);
+			$patterns = array();
 
-			if( !is_single($pages) and !is_page($pages) ) {
+			if( $this->pageMatch($pages, $patterns, false) ) {
 				return;
 			}
 		}
@@ -227,6 +229,14 @@ class private_blog_callbacks extends lavaBase
 		} else {
 			do_action( $this->_slug( "displayLoginPage" ) );
 			exit;
+		}
+	}
+
+	function pageMatch( $pages, $patterns, $any = true ) {
+		if( $any ) {
+			return (is_single($pages) or is_page($pages) or is_singular($pages) or is_tag($pages) or is_category($pages) or is_sticky($pages) or is_attachment($pages) or is_post_type_archive($pages) );
+		} else {
+			return (!is_single($pages) and !is_page($pages) and !is_singular($pages) and !is_tag($pages) and !is_category($pages) and !is_sticky($pages) and !is_attachment($pages) and !is_post_type_archive($pages) );
 		}
 	}
 
@@ -297,7 +307,10 @@ class private_blog_callbacks extends lavaBase
 
 	function loginAccepted() {
 		$this->setCookie();
-		$redirect = $_POST[ $this->_slug( "redirect" ) ];
+		$redirect = get_home_url('/?loggedin');
+		if( array_key_exists($this->_slug( "redirect" ), $_POST) ) {
+			$redirect = $_POST[ $this->_slug( "redirect" ) ];
+		}
 		wp_redirect( $redirect );
 		exit;
 	}
