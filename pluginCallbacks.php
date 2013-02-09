@@ -195,30 +195,9 @@ class private_blog_callbacks extends lavaBase
 			return;
 		}
 
-		$unprotect_certain_pages = $this->_settings()->fetchSetting( "unprotect_certain_pages" )->getValue();
-		$protect_certain_pages = $this->_settings()->fetchSetting( "protect_certain_pages" )->getValue();
-
-		if( $unprotect_certain_pages == "on" ) {
-			$pages = $this->_settings()->fetchSetting( "pages_to_unprotect" )->getValue();
-			$pages = explode(',', $pages);
-			$patterns = array();
-
-			if( $this->pageMatch($pages, $patterns, true) ) {
-				return;
-			}
+		if( !$this->shouldProtect() ) {
+			return;
 		}
-
-		if( $protect_certain_pages == "on" ) {
-			$pages = $this->_settings()->fetchSetting( "pages_to_protect" )->getValue();
-			$pages = explode(',', $pages);
-			$patterns = array();
-
-			if( $this->pageMatch($pages, $patterns, false) ) {
-				return;
-			}
-		}
-
-
 
 		$isLoggedIn = apply_filters( $this->_slug( "isLoggedIn" ), false );
 
@@ -232,12 +211,85 @@ class private_blog_callbacks extends lavaBase
 		}
 	}
 
-	function pageMatch( $pages, $patterns, $any = true ) {
-		if( $any ) {
-			return (is_single($pages) or is_page($pages) or is_singular($pages) or is_tag($pages) or is_category($pages) or is_sticky($pages) or is_attachment($pages) or is_post_type_archive($pages) );
+	function shouldProtect() {
+		$unprotect_certain_pages = $this->_settings()->fetchSetting( "unprotect_certain_pages" )->getValue();
+		$protect_certain_pages = $this->_settings()->fetchSetting( "protect_certain_pages" )->getValue();
+		$is_single = (is_single() or is_page() or is_singular());
+
+		if( $unprotect_certain_pages == "on" ) {
+			$unprotectPages = explode(',', $this->_settings()->fetchSetting( "pages_to_unprotect" )->getValue());
+			$unprotectCategories = explode(',', $this->_settings()->fetchSetting( "categories_to_unprotect" )->getValue());
+			$unprotectTags = explode(',', $this->_settings()->fetchSetting( "tags_to_unprotect" )->getValue());
+			$unprotectPostTypes = explode(',', $this->_settings()->fetchSetting( "post_types_to_unprotect" )->getValue());
 		} else {
-			return (!is_single($pages) and !is_page($pages) and !is_singular($pages) and !is_tag($pages) and !is_category($pages) and !is_sticky($pages) and !is_attachment($pages) and !is_post_type_archive($pages) );
+			$unprotectPages = array('kjashdakds');
+			$unprotectCategories = array('kjashdakds');
+			$unprotectTags = array('kjashdakds');
+			$unprotectPostTypes = array('kjashdakds');
 		}
+
+		if( $protect_certain_pages == "on" ) {
+			$protectPages = explode(',', $this->_settings()->fetchSetting( "pages_to_protect" )->getValue());
+			$protectCategories = explode(',', $this->_settings()->fetchSetting( "categories_to_protect" )->getValue());
+			$protectTags = explode(',', $this->_settings()->fetchSetting( "tags_to_protect" )->getValue());
+			$protectPostTypes = explode(',', $this->_settings()->fetchSetting( "post_types_to_protect" )->getValue());
+		} else {
+			$protectPages = array('alskdjalsdk');
+			$protectCategories = array('alskdjalsdk');
+			$protectTags = array('alskdjalsdk');
+			$protectPostTypes = array('alskdjalsdk');
+		}
+
+		if( $unprotect_certain_pages != 'on' and $protect_certain_pages != 'on') {
+			return true;
+		}
+
+		//match pages -> tags -> categories -> post types
+
+		if( is_page($protectPages) or is_single($protectPages) ) {
+			return true;
+		}
+
+		if( is_page($unprotectPages) or is_single($unprotectPages) ) {
+			return false;
+		}
+
+		//match tags
+
+		if( is_tag($protectTags) or ($is_single and has_tag($protectTags)) ) {
+			return true;
+		}
+
+		if( is_tag($unprotectTags) or ($is_single and has_tag($unprotectTags)) ) {
+			return false;
+		}
+
+		// match categories
+
+		if( is_category($protectCategories) or ($is_single and in_category($protectCategories)) ) {
+			return true;
+		}
+
+		if( is_category($unprotectCategories) or ($is_single and in_category($unprotectCategories)) ) {
+			return false;
+		}
+
+		// match post-types
+
+		if( is_post_type_archive($protectPostTypes) or ($is_single and is_singular($protectPostTypes)) ) {
+			return true;
+		}
+
+		if( is_post_type_archive($unprotectPostTypes) or ($is_single and is_singular($unprotectPostTypes)) ) {
+			return false;
+		}
+
+		if( $protect_certain_pages == 'on') {
+			return false;
+		} else {
+			return true;
+		}
+
 	}
 
 	function isLoginRequest( $current ) {

@@ -315,11 +315,11 @@ function bindSticky()
 
 function bindSettingToggle() {
     jQuery( '.setting.tag-setting-toggle input[data-actual="true"]').change(function(){
-        var item_to_toggle = jQuery(this).parents('.setting').attr('data-setting-toggle');
+        var setting_id = jQuery(this).parents('.setting').attr('data-setting-key');
         if( jQuery(this).hasAttr( "checked" ) ) {
-            jQuery('.setting[data-setting-key="' + item_to_toggle + '"]').removeClass( "lava-setting-toggle-hidden" );
+            jQuery('.setting[data-setting-toggle="' + setting_id + '"]').removeClass( "lava-setting-toggle-hidden" );
         } else {
-            jQuery('.setting[data-setting-key="' + item_to_toggle + '"]').addClass( "lava-setting-toggle-hidden" );
+            jQuery('.setting[data-setting-toggle="' + setting_id + '"]').addClass( "lava-setting-toggle-hidden" );
         }
         codeRefresh();//hack to fix code box issues
     });
