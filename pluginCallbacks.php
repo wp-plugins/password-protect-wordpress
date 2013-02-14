@@ -109,6 +109,12 @@ class private_blog_callbacks extends lavaBase
 			$this->addLogoutLink();
 		}
 
+		$secure_media = $this->_settings()->fetchSetting( "secure_media" )->getValue();
+
+		if( $secure_media == "on" ) {
+			$this->secureMedia();
+		}
+
 		$this->doInitActions();
 	}
 
@@ -482,6 +488,60 @@ class private_blog_callbacks extends lavaBase
 		}
 	}
 
+	function secureMedia() {
+		$this->addWPFilter('generate_rewrite_rules', 'secureMediaRewrite');
+	}
+
+	function secureMediaRewrite($content) {
+		global $wp_rewrite;
+		$plugin_path = explode('/', plugin_basename(__FILE__));
+		$plugin_path = $plugin_path[0];
+		$roots_new_non_wp_rules = array(
+			'wp-content/uploads/(.*)'	=> 'wp-content/plugins/'. $plugin_path . '/media.php?file=$1',
+		);
+		$wp_rewrite->non_wp_rules += $roots_new_non_wp_rules;
+	}
+
+	function doMedia() {
+		if(array_key_exists('file', $_GET)) {
+			$file = $_GET['file'];
+			$ext = explode('.', $file);
+			$ext = end($ext);
+			$upload_dir = wp_upload_dir();
+			$isLoggedIn = apply_filters( $this->_slug( "isLoggedIn" ), false );
+			if($isLoggedIn) {
+				$file = str_replace('..', '', $file );// block traversing up directories
+				$file = $upload_dir['basedir'] . '/' . $file;
+				header('Content-Length: ' . filesize($file));
+				header('Content-Type: ' . $this->contentType($ext));
+				ob_clean();
+				flush();
+				readfile($file);
+			} else {
+				die('unauthorised');
+			}
+		}
+	}
+
+	function contentType($ext) {
+		switch($ext) {
+			case 'png':
+				return 'image/png';
+				break;
+			case 'jpeg':
+			case 'jpg':
+				return 'image/jpeg';
+				break;
+			case 'gif':
+				return 'image/gif';
+				break;
+			case 'pdf':
+				return 'application/pdf';
+				break;
+			default:
+				return '';
+		}
+	}
 	/*
 	Detects what mechanism the theme is using to display navigation and adds the relevant filters
 	*/
@@ -518,7 +578,6 @@ class private_blog_callbacks extends lavaBase
 		Handles the backend stuff to make sure only the options that can actually be changed are shown to user and makes sure that theme changes don't break it.
 	*/
 	function logoutLinkBackend() {
-
 		$locations = get_nav_menu_locations();// get the locations set by the theme
 		if( !is_array( $locations ) ) {
 			$locations = array();

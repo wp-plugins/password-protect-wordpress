@@ -9,6 +9,8 @@ class lavaSettingsPage extends lavaPage
 		$this->saveSettings();
 		$this->resetSettings();
 		$this->addAction( "toolbarButtons" );
+		global $wp_rewrite;
+		$wp_rewrite->flush_rules();
 		//queue notifications
 		//do redirect
 	}

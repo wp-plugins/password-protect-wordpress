@@ -3,7 +3,7 @@
 Plugin Name: Private Blog
 Plugin URI: http://www.volcanicpixels.com/password-protect-wordpress-plugin/
 Description: Private Blog is a wordpress plugin which allows you to password protect all of your wordpress blog including all posts and feeds with a single password.
-Version: 4.10.8
+Version: 4.10.9
 Author: Daniel Chatfield
 Author URI: http://www.danielchatfield.com
 License: GPLv2
@@ -13,7 +13,7 @@ License: GPLv2
 include( dirname( __FILE__ ) ."/lava/lava.php" );
 
 $pluginName = "Private Blog";
-$pluginVersion = "4.10.8";
+$pluginVersion = "4.10.9";
 
 $thePlugin = lava::newPlugin( __FILE__, $pluginName, $pluginVersion );
 $pluginSlug = $thePlugin->_slug();
@@ -106,10 +106,10 @@ $thePlugin->_settings()
 		->setDefault( "off" )
 		->setHelp( __( "When enabled, the plugin will attempt to put a logout link in the navigation", $pluginSlug ) )
 		->addTag( "is-premium" )
-		->settingToggle( "logout_link_menu" )
 	->addSetting( "logout_link_menu" )
 		->setType( "select" )
 		->addTag( "no-margin" )
+		->settingToggledBy( "logout_link" )
 	->addSetting( "rss_feed_visible" )
 		->setName( __( "Make RSS Feeds public", $pluginSlug ) )
 		->setType( "checkbox" )
@@ -191,6 +191,12 @@ $thePlugin->_settings()
 		->setDefault( "off" )
 		->addTag( "is-premium" )
 		->setHelp( __( "When enabled, every attempt to login will be logged", $pluginSlug ) )
+	->addSetting( "secure_media" )
+		->setName( __( "Block access to media unless loggedin (only works on apache with permalinks)", $pluginSlug ) )
+		->setType( "checkbox" )
+		->setDefault( "off" )
+		->addTag( "is-premium" )
+		->setHelp( __( "When enabled access to media files will be blocked if user is not logged in", $pluginSlug ) )
 ;
 
 
