@@ -198,3 +198,4 @@ This section describes how to install the plugin and get it working.
 
 * Added ability to remove logs
 * Added ability to name passwords
+* Filter by URL pattern
