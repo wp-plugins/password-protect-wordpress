@@ -57,12 +57,21 @@ class lavaSettingsPage extends lavaPage
 			echo $setting->doSetting();
 			//action hook
 		}
+		$this->customPlugin();
 		?>
 		<div class="lava-action-tray" style="margin-left:30px; margin-top:20px;">
 			<input type="submit" class="lava-btn js-fallback" name="action" value="<?php _e( "Save Settings", $this->_framework() ) ?>" />
 		</div>
 		<?php
 		echo '</form>';
+	}
+
+	function customPlugin() {
+		?>
+		<p>
+			Need a feature we don't offer? <a href="http://www.volcanicpixels.com/contact-us/?utm_source=plugin_settings">Contact us</a> and we'll give you a quote for a custom plugin.
+		</p>
+		<?php
 	}
 
 	function saveSettings()

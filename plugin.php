@@ -3,7 +3,7 @@
 Plugin Name: Private Blog
 Plugin URI: http://www.volcanicpixels.com/password-protect-wordpress-plugin/
 Description: Private Blog is a wordpress plugin which allows you to password protect all of your wordpress blog including all posts and feeds with a single password.
-Version: 4.10.10
+Version: 4.11.0
 Author: Daniel Chatfield
 Author URI: http://www.danielchatfield.com
 License: GPLv2
@@ -13,7 +13,7 @@ License: GPLv2
 include( dirname( __FILE__ ) ."/lava/lava.php" );
 
 $pluginName = "Private Blog";
-$pluginVersion = "4.10.10";
+$pluginVersion = "4.11.0";
 
 $thePlugin = lava::newPlugin( __FILE__, $pluginName, $pluginVersion );
 $pluginSlug = $thePlugin->_slug();
@@ -150,6 +150,16 @@ $thePlugin->_settings()
 		->setHelp( __( "Enter a comma delimited list of post-type IDs, slugs or names", $pluginSlug ) )
 		->addTag( 'is-premium' )
 		->settingToggledBy('protect_certain_pages')
+	->addSetting( "urls_to_protect" )
+		->setName( __( "Url patterns to protect", $pluginSlug ) )
+		->setType( "text" )
+		->setDefault( "" )
+		->setHelp( __( "Enter a comma delimited list of patterns to match against", $pluginSlug ) )
+		->addTag( 'is-premium' )
+		->settingToggledBy('protect_certain_pages')
+
+
+
 	->addSetting( "unprotect_certain_pages" )
 		->setName( __( "Do not protect certain pages", $pluginSlug ) )
 		->setType( "checkbox" )
@@ -185,6 +195,15 @@ $thePlugin->_settings()
 		->setHelp( __( "Enter a comma delimited list of post-type IDs, slugs or names", $pluginSlug ) )
 		->addTag( 'is-premium' )
 		->settingToggledBy('unprotect_certain_pages')
+	->addSetting( "urls_to_unprotect" )
+		->setName( __( "Url patterns to unprotect", $pluginSlug ) )
+		->setType( "text" )
+		->setDefault( "" )
+		->setHelp( __( "Enter a comma delimited list of patterns to match against", $pluginSlug ) )
+		->addTag( 'is-premium' )
+		->settingToggledBy('unprotect_certain_pages')
+
+
 	->addSetting( "record_logs" )
 		->setName( __( "Create a log of all logins and logouts", $pluginSlug ) )
 		->setType( "checkbox" )

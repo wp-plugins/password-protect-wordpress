@@ -345,20 +345,26 @@ function bindFocus() {
 }
 
 function bindDataSource() {
+    var offset = 0;
     jQuery('.lava-table-loader-refresh-button').click(function(){
-        doDataSource();
+        offset = 0;
+        doDataSource(offset);
     })
-    doDataSource();
+    jQuery('.lava-table-loader-older-button').click(function(){
+        offset = offset + 1;
+        doDataSource(offset);
+    })
+    doDataSource(0);
 }
 
-function doDataSource() {
+function doDataSource(offset) {
     jQuery('.lava-full-page-loader').show();
     jQuery('.lava-table-viewer').each(function(){
         jQuery(this).find('table').html("<thead></thead><tbody></tbody>");
         var dataSource = jQuery(this).attr( "data-data-source" );
         var action = jQuery(this).attr( "data-ajax-action" );
         var nonce = jQuery(this).attr( "data-ajax-nonce" );
-		jQuery.getJSON( ajaxurl + '?action=' + action + '&nonce=' + nonce + '&data-source=' + dataSource, function(data) {
+		jQuery.getJSON( ajaxurl + '?action=' + action + '&nonce=' + nonce + '&data-source=' + dataSource + '&offset=' + offset, function(data) {
 			jQuery('.lava-full-page-loader').hide();
 			parseTableData( dataSource, data["data"]["data"] );
         });
@@ -370,6 +376,7 @@ function doDataSource() {
     	});
     });
 }
+
 
 function parseTableData( dataSource, data ) {
 

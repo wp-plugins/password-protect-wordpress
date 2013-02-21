@@ -162,7 +162,7 @@ class private_blog_callbacks extends lavaBase
 	{
 		$pluginSlug = $this->_slug();
 
-		$html = '<div class="js-only custom-password-label clearfix tiptip" onclick="alert(\'not implemented yet\')" title="' . __( "Click to change the name and colour of this password. These will be used in the Access Logs.", $pluginSlug ) . '"><span>undefined</span></div>' .$html;
+		$html = '<div class="js-only custom-password-label clearfix tiptip" title="' . __( "Click to change the label for this password. These will be used in the Access Logs.", $pluginSlug ) . '"><span>undefined</span></div>' .$html;
 		return $html;
 	}
 
@@ -227,11 +227,13 @@ class private_blog_callbacks extends lavaBase
 			$unprotectCategories = explode(',', $this->_settings()->fetchSetting( "categories_to_unprotect" )->getValue());
 			$unprotectTags = explode(',', $this->_settings()->fetchSetting( "tags_to_unprotect" )->getValue());
 			$unprotectPostTypes = explode(',', $this->_settings()->fetchSetting( "post_types_to_unprotect" )->getValue());
+			$unprotectUrls = explode(',', $this->_settings()->fetchSetting( "urls_to_unprotect" )->getValue());
 		} else {
-			$unprotectPages = array('kjashdakds');
-			$unprotectCategories = array('kjashdakds');
-			$unprotectTags = array('kjashdakds');
-			$unprotectPostTypes = array('kjashdakds');
+			$unprotectPages = array('garbageurl-willnotmatchanything');
+			$unprotectCategories = array('garbageurl-willnotmatchanything');
+			$unprotectTags = array('garbageurl-willnotmatchanything');
+			$unprotectPostTypes = array('garbageurl-willnotmatchanything');
+			$unprotectUrls = array('garbageurl-willnotmatchanything');
 		}
 
 		if( $protect_certain_pages == "on" ) {
@@ -239,11 +241,13 @@ class private_blog_callbacks extends lavaBase
 			$protectCategories = explode(',', $this->_settings()->fetchSetting( "categories_to_protect" )->getValue());
 			$protectTags = explode(',', $this->_settings()->fetchSetting( "tags_to_protect" )->getValue());
 			$protectPostTypes = explode(',', $this->_settings()->fetchSetting( "post_types_to_protect" )->getValue());
+			$protectUrls = explode(',', $this->_settings()->fetchSetting( "urls_to_protect" )->getValue());
 		} else {
-			$protectPages = array('alskdjalsdk');
-			$protectCategories = array('alskdjalsdk');
-			$protectTags = array('alskdjalsdk');
-			$protectPostTypes = array('alskdjalsdk');
+			$protectPages = array('garbageurl-willnotmatchanything');
+			$protectCategories = array('garbageurl-willnotmatchanything');
+			$protectTags = array('garbageurl-willnotmatchanything');
+			$protectPostTypes = array('garbageurl-willnotmatchanything');
+			$protectUrls = array('garbageurl-willnotmatchanything');
 		}
 
 		if( $unprotect_certain_pages != 'on' and $protect_certain_pages != 'on') {
@@ -288,6 +292,25 @@ class private_blog_callbacks extends lavaBase
 
 		if( is_post_type_archive($unprotectPostTypes) or ($is_single and is_singular($unprotectPostTypes)) ) {
 			return false;
+		}
+
+		// match urls
+
+		
+		foreach($unprotectUrls as $pattern) {
+			if(!empty($pattern)) {
+				if(preg_match('`'. trim($pattern) . '`', $_SERVER['REQUEST_URI'])) {
+					return false;
+				}
+			}
+		}
+
+		foreach($protectUrls as $pattern) {
+			if(!empty($pattern)) {
+				if(preg_match('`'. trim($pattern) . '`', $_SERVER['REQUEST_URI'])) {
+					return true;
+				}
+			}
 		}
 
 		if( $protect_certain_pages == 'on') {
