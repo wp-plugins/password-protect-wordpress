@@ -595,7 +595,7 @@ class private_blog_callbacks extends lavaBase
 	*/
 	function pagesFilter( $output, $r ) {
 		if( !strpos( $output, "page-item-logout" ) )
-			$output .= '<li class="page_item page-item-logout"><a href="' . add_query_arg( $this->_slug( "action" ), "logout", get_bloginfo('url') ) . '">' . __( "Logout", $this->_slug() ) . '</a></li>';
+			$output .= '<li class="page_item page-item-logout"><a href="' . add_query_arg( $this->_slug( "action" ), "logout", get_bloginfo('url') . '/' ) . '">' . __( "Logout", $this->_slug() ) . '</a></li>';
 		return $output;
 	}
 

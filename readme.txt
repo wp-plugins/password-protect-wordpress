@@ -205,3 +205,7 @@ This section describes how to install the plugin and get it working.
 * Added ability to auto-login users
 * Added ability to auto-populate password field
 * Prevented robots indexing login page
+
+= 4.11.2
+
+* Fixed bug with logout on paths
