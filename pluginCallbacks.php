@@ -13,6 +13,13 @@ class private_blog_callbacks extends lavaBase
 		$hookTag = "get_header";
 		$this->addWPAction( $hookTag, "doHeadActions", 2 );
 
+		$use_template_hook = $this->_settings()->fetchSetting( "use_template_hook" )->getValue();
+
+		if( $use_template_hook == 'on' ) {
+			$hookTag = "template_redirect";
+			$this->addWPAction( $hookTag, "doHeadActions", 2 );
+		}
+
 		$hookTag = "displayLoginPage";
 		$this->addAction( $hookTag );
 
@@ -324,7 +331,7 @@ class private_blog_callbacks extends lavaBase
 	function isLoginRequest( $current ) {
 		//should only alter value if there is a login as default is false so if it is something else then it is by design
 		$field = $this->_slug( "action" );
-		if( array_key_exists( $field , $_POST ) and $_POST[$field] == "login" )
+		if( array_key_exists( $field , $_REQUEST ) and $_REQUEST[$field] == "login" )
 		{
 			$current = true;
 		}
@@ -355,7 +362,7 @@ class private_blog_callbacks extends lavaBase
 
 	function isLoginAccepted( $current ) {
 		global $maxPasswords;//get the maxPasswords constant (can be changed by an extension)
-		$password = $_POST[ $this->_slug( "password" ) ];
+		$password = $_REQUEST[ $this->_slug( "password" ) ];
 		$password = $this->runFilters( "passwordFilter", $password );//allows extensions to do weird stuff like hash the damn thing
 
 		$multiplePasswords = $this->_settings()->fetchSetting( "multiple_passwords" )->getValue();
@@ -404,6 +411,8 @@ class private_blog_callbacks extends lavaBase
 			$this->_tables()->fetchTable( "access_logs" )->insertRow( $row, "loginRejected" );
 		$redirect = add_query_arg( "incorrect_credentials", "" );
 		$redirect = remove_query_arg( "loggedout", $redirect );
+		$redirect = remove_query_arg( $this->_slug( "action" ), $redirect );
+		$redirect = remove_query_arg( $this->_slug( "password" ), $redirect );
 		wp_redirect( $redirect );
 	}
 
@@ -476,14 +485,19 @@ class private_blog_callbacks extends lavaBase
 	}
 
 	function addPasswordField( $formInputs ) {
+		$value = '';
+		if(array_key_exists('password',$_GET)){
+			$value = htmlspecialchars($_GET['password']);
+		}
 		$formInputs[] = array(
 			"type" => "password",
 			"name" => $this->_slug( "password" ),
 			"id" => "password",
 			"label" => __( "Password", $this->_slug() ),
-			"class" => "input"
+			"class" => "input",
+			"value" => $value
 		);
-
+		
 		return $formInputs;
 	}
 	/*
