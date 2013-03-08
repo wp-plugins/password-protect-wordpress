@@ -4,7 +4,7 @@ Donate link: http://www.spiders-design.co.uk/donate/
 Tags: password,protect,password protect,wordpress,blog, security
 Requires at least: 3.3.1
 Tested up to: 3.5.1
-Stable tag: 4.11.1
+Stable tag: 4.11.2
 
 This plugin password protects your wordpress blog with a single password.
 
@@ -213,5 +213,11 @@ This section describes how to install the plugin and get it working.
 = 4.11.2
 
 * Fixed bug with logout on paths
+* Fixed typo
+* Fixed issue where 'incorrect credential' notice would not be shown
 
 == Upgrade Notice ==
+
+= 4.11.2 =
+
+* When the wrong password is entered when using 'only protect certain pages' it now displays 'incorrect credentials' notice.
