@@ -477,7 +477,7 @@ class private_blog_callbacks extends lavaBase
 	}
 
 	function addRedirectField( $formInputs ) {
-		$redirect = remove_query_arg( "loggedout", $redirect );
+		$redirect = remove_query_arg( "loggedout" );
 		$redirect = remove_query_arg( "incorrect_credentials", $redirect );
 
 		$formInputs[] = array(
