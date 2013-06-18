@@ -532,7 +532,12 @@ class private_blog_callbacks extends lavaBase
 	}
 
 	function secureMedia() {
-		$this->addWPFilter('generate_rewrite_rules', 'secureMediaRewrite');
+		$isLoggedIn = apply_filters( $this->_slug( "isLoggedIn" ), false );
+		if( $isLoggedIn === true ) {
+			return;
+		} else {
+			$this->addWPFilter('generate_rewrite_rules', 'secureMediaRewrite');
+		}
 	}
 
 	function secureMediaRewrite($content) {

@@ -13,9 +13,9 @@ This plugin password protects your wordpress blog with a single password.
 Want to make your blog private from prying eyes? Well my password protection plugin is perfect for that job; with its intelligent UI and endless features it will make the chore of keeping your data secure and private easy.
 
 > **NOTE** This plugin will not work on WPEngine due to their very aggressive caching.
-
-
-> Use w3-total-cache instead of wp-super-cache
+  
+  
+> Use w3-total-cache instead of wp-super-cache. Deactivating a caching plugin does NOT always purge the cache. Before deactivating go to the plugin admin page and turn off caching from there.
 
 Features:
 
@@ -58,6 +58,11 @@ This section describes how to install the plugin and get it working.
 2. Change the CSS styles for the login page to get the look and feel right
 
 == Changelog ==
+
+= 4.11.8 =
+
+* Fixed javascript errors reported by previous update
+* Improved URL rewrite performance
 
 = 4.11.7 =
 
